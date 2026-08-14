@@ -1,33 +1,746 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Browser Crash Test</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEXUS // HTML5 Game Vault</title>
+  
+  <!-- Premium Modern Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ================= DESIGN SYSTEM ================= */
+    :root {
+      --bg-main: #06070a;
+      --bg-surface: #0e1117;
+      --bg-card: #141824;
+      --bg-card-hover: #1b2131;
+      
+      --border-subtle: rgba(255, 255, 255, 0.07);
+      --border-accent: rgba(0, 240, 255, 0.3);
+      
+      --accent-cyan: #00f0ff;
+      --accent-violet: #8b5cf6;
+      --accent-emerald: #10b981;
+      --accent-coral: #ff4757;
+      
+      --text-main: #f3f4f6;
+      --text-muted: #8a94a6;
+      --text-dim: #505a69;
+      
+      --font-heading: 'Space Grotesk', sans-serif;
+      --font-body: 'Outfit', sans-serif;
+      --nav-height: 60px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.08) 0%, transparent 60%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 32px 32px, 32px 32px;
+    }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-main); }
+    ::-webkit-scrollbar-thumb { background: #1e2433; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
+
+    /* ================= HOME VIEW ================= */
+    #homeView {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background: rgba(14, 17, 23, 0.85);
+      backdrop-filter: blur(16px);
+      padding: 0.8rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: #000;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    }
+
+    .brand-title {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+    }
+
+    .brand-title span { color: var(--accent-cyan); }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.1);
+      padding: 0.25rem 0.6rem;
+      border-radius: 20px;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent-emerald);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent-emerald);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .search-container {
+      position: relative;
+      width: 280px;
+    }
+
+    .search-bar {
+      width: 100%;
+      padding: 0.6rem 1rem 0.6rem 2.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(0, 0, 0, 0.4);
+      color: var(--text-main);
+      font-size: 0.875rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-bar:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      pointer-events: none;
+    }
+
+    main {
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+
+    .pill {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 0.5rem 1.25rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .pill:hover {
+      color: var(--text-main);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .pill.active {
+      background: var(--accent-cyan);
+      color: #000;
+      border-color: var(--accent-cyan);
+      font-weight: 700;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .game-card {
+      background: var(--bg-card);
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .game-card:hover {
+      transform: translateY(-6px) scale(1.01);
+      border-color: var(--border-accent);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 240, 255, 0.1);
+      background: var(--bg-card-hover);
+    }
+
+    .card-cover {
+      height: 140px;
+      width: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+    }
+
+    .cover-pattern {
+      position: absolute;
+      inset: 0;
+      opacity: 0.15;
+      background-image: radial-gradient(#fff 1px, transparent 1px);
+      background-size: 12px 12px;
+    }
+
+    .cover-icon {
+      font-size: 3rem;
+      z-index: 2;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.4));
+      transition: transform 0.3s ease;
+    }
+
+    .game-card:hover .cover-icon {
+      transform: scale(1.15) rotate(-3deg);
+    }
+
+    .card-body {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      flex: 1;
+    }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: auto;
+      padding-top: 0.4rem;
+    }
+
+    .play-btn-hint {
+      color: var(--accent-cyan);
+      font-weight: 600;
+      opacity: 0;
+      transform: translateX(-5px);
+      transition: all 0.2s ease;
+    }
+
+    .game-card:hover .play-btn-hint {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Initial Catalog Skeleton Loading */
+    .catalog-loader {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 5rem 0;
+      gap: 1rem;
+      color: var(--text-muted);
+    }
+
+    /* ================= GAME VIEW ================= */
+    #gameView {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
+    }
+
+    .hud-bar {
+      height: var(--nav-height);
+      background: #090b10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .hud-left {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .btn-home {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-home:hover {
+      background: var(--accent-coral);
+      border-color: var(--accent-coral);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(255, 71, 87, 0.4);
+    }
+
+    .btn-home kbd {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 0.1rem 0.3rem;
+      border-radius: 3px;
+      font-size: 0.7rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .active-title {
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .hud-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .hud-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 0.5rem 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .hud-btn:hover {
+      color: var(--text-main);
+      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .iframe-container {
+      position: relative;
+      width: 100%;
+      height: calc(100vh - var(--nav-height));
+      background: #000;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    .loader-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-main);
+      gap: 1.2rem;
+      z-index: 10;
+    }
+
+    .spinner-ring {
+      width: 50px;
+      height: 50px;
+      border: 3px solid var(--border-subtle);
+      border-top-color: var(--accent-cyan);
+      border-right-color: var(--accent-violet);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
-    <script>
-        // Infinite loop that consumes CPU
-        while(true) {
-            console.log("Crashing browser...");
-        }
+
+  <!-- ================= HOMEPAGE ================= -->
+  <div id="homeView">
+    <header>
+      <div class="brand">
+        <div class="brand-logo">N</div>
+        <div class="brand-title">NEXUS <span>VAULT</span></div>
+        <div class="status-badge">
+          <div class="status-dot"></div>
+          ONLINE
+        </div>
+      </div>
+
+      <div class="search-container">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-bar" id="searchInput" placeholder="Search 200+ games..." />
+      </div>
+    </header>
+
+    <main>
+      <div class="filter-bar">
+        <button class="pill active" onclick="filterCategory('ALL', this)">ALL GAMES</button>
+        <button class="pill" onclick="filterCategory('ACTION', this)">ACTION</button>
+        <button class="pill" onclick="filterCategory('SPORTS', this)">SPORTS & RACING</button>
+        <button class="pill" onclick="filterCategory('PUZZLE', this)">PUZZLE</button>
+        <button class="pill" onclick="filterCategory('ARCADE', this)">ARCADE</button>
+      </div>
+
+      <div class="section-header">
+        <h2 class="section-title">Repository Catalog</h2>
+        <span id="gameCount" style="font-size: 0.85rem; color: var(--text-dim); font-weight: 600;">LOADING...</span>
+      </div>
+
+      <div class="game-grid" id="gameGrid">
+        <div class="catalog-loader">
+          <div class="spinner-ring"></div>
+          <p>Fetching entire game library from GitHub...</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ================= GAME HUD VIEW ================= -->
+  <div id="gameView">
+    <div class="hud-bar">
+      <div class="hud-left">
+        <button class="btn-home" onclick="goHome()">
+          ← Return to Vault <kbd>ESC</kbd>
+        </button>
+        <div class="active-title" id="activeGameTitle">Loading Game...</div>
+      </div>
+
+      <div class="hud-controls">
+        <button class="hud-btn" onclick="reloadGame()">🔄 Refresh</button>
+        <button class="hud-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+      </div>
+    </div>
+
+    <div class="iframe-container">
+      <div class="loader-overlay" id="loader">
+        <div class="spinner-ring"></div>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Injecting Game Code...</p>
+      </div>
+      <iframe id="gameIframe"></iframe>
+    </div>
+  </div>
+
+  <script>
+    // GitHub API Endpoint for the offline games directory
+    const REPO_API_URL = "https://api.github.com/repos/CoolDude2349/Offline-HTML-Games-Pack/contents/offline";
+    
+    let allGames = [];
+    let currentActiveGame = null;
+    let currentFilter = 'ALL';
+
+    const homeView = document.getElementById("homeView");
+    const gameView = document.getElementById("gameView");
+    const gameGrid = document.getElementById("gameGrid");
+    const gameIframe = document.getElementById("gameIframe");
+    const activeGameTitle = document.getElementById("activeGameTitle");
+    const loader = document.getElementById("loader");
+    const gameCount = document.getElementById("gameCount");
+
+    // 1. Fetch Repository Contents Automatically
+    async function fetchCatalogFromGitHub() {
+      try {
+        const response = await fetch(REPO_API_URL);
+        if (!response.ok) throw new Error("GitHub API limit reached or repo unavailable.");
+
+        const files = await response.json();
+
+        // Filter out non-HTML files
+        allGames = files
+          .filter(file => file.name.endsWith('.html') || file.name.endsWith('.htm'))
+          .map(file => processGameData(file));
+
+        renderGrid(allGames);
+      } catch (err) {
+        console.error(err);
+        gameGrid.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--accent-coral);">
+            <h3>Failed to auto-load GitHub Repository</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Rate limit exceeded or bad connection.</p>
+          </div>
+        `;
+      }
+    }
+
+    // 2. Helper to Format Raw Filename -> Clean Game Object
+    function processGameData(file) {
+      const rawName = file.name.replace(/\.(html|htm)$/i, '');
+      const formattedTitle = formatTitle(rawName);
+      const category = detectCategory(rawName);
+      const icon = detectIcon(rawName, category);
+
+      return {
+        id: file.sha,
+        title: formattedTitle,
+        rawName: rawName,
+        category: category,
+        icon: icon,
+        downloadUrl: file.download_url
+      };
+    }
+
+    // Format filename e.g. "angrybirdsspace" -> "Angry Birds Space"
+    function formatTitle(str) {
+      // Split digits, uppercase, and special chars nicely
+      let cleaned = str
+        .replace(/([a-z])([0-9])/gi, '$1 $2')
+        .replace(/([0-9])([a-z])/gi, '$1 $2')
+        .replace(/io$/i, ' .io')
+        .replace(/_/g, ' ');
+
+      // Capitalize first letter of every word
+      return cleaned.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    }
+
+    // Categorize game based on keywords in name
+    function detectCategory(name) {
+      const n = name.toLowerCase();
+      if (n.includes('soccer') || n.includes('basket') || n.includes('football') || n.includes('moto') || n.includes('drive') || n.includes('drift') || n.includes('car') || n.includes('race')) return 'SPORTS';
+      if (n.includes('fnaf') || n.includes('granny') || n.includes('backrooms') || n.includes('tank') || n.includes('shooter') || n.includes('battle') || n.includes('smash')) return 'ACTION';
+      if (n.includes('2048') || n.includes('chess') || n.includes('cuttherope') || n.includes('papas') || n.includes('quiz') || n.includes('riddle')) return 'PUZZLE';
+      return 'ARCADE';
+    }
+
+    // Assign contextual emojis automatically
+    function detectIcon(name, category) {
+      const n = name.toLowerCase();
+      if (n.includes('bird')) return '🎯';
+      if (n.includes('tank')) return '🚜';
+      if (n.includes('car') || n.includes('drive') || n.includes('drift')) return '🏎️';
+      if (n.includes('moto') || n.includes('bike')) return '🏍️';
+      if (n.includes('soccer') || n.includes('football')) return '⚽';
+      if (n.includes('basket')) return '🏀';
+      if (n.includes('fnaf') || n.includes('granny')) return '👻';
+      if (n.includes('papa')) return '🍕';
+      if (n.includes('duck')) return '🦆';
+      if (n.includes('run') || n.includes('parkour')) return '🏃';
+      if (category === 'PUZZLE') return '🧩';
+      if (category === 'ACTION') return '💥';
+      return '🎮';
+    }
+
+    // 3. Render Cards to Grid
+    function renderGrid(list = allGames) {
+      gameGrid.innerHTML = "";
+      gameCount.textContent = `${list.length} TITLES FOUND`;
+
+      if (list.length === 0) {
+        gameGrid.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-dim);">
+            No games found matching your search.
+          </div>
+        `;
+        return;
+      }
+
+      list.forEach(game => {
+        const card = document.createElement("div");
+        card.className = "game-card";
+        card.onclick = () => launchGame(game);
         
-        // Alternative method: create massive memory consumption
-        let arrays = [];
-        for(let i = 0; i < 1000; i++) {
-            arrays.push(new Array(1000000).fill("x".repeat(1000)));
-        }
-        
-        // Alternative method: create infinite DOM elements
-        for(let i = 0; i < 100000; i++) {
-            const div = document.createElement("div");
-            div.innerHTML = "x".repeat(10000);
-            document.body.appendChild(div);
-        }
-        
-        // Alternative method: recursive function call
-        function recursiveCrash() {
-            recursiveCrash();
-        }
-        recursiveCrash();
-    </script>
+        card.innerHTML = `
+          <div class="card-cover">
+            <div class="cover-pattern"></div>
+            <span class="cover-icon">${game.icon}</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title" title="${game.title}">${game.title}</div>
+            <div class="card-meta">
+              <span>${game.category}</span>
+              <span class="play-btn-hint">PLAY ▶</span>
+            </div>
+          </div>
+        `;
+        gameGrid.appendChild(card);
+      });
+    }
+
+    // 4. Launch Game
+    async function launchGame(game) {
+      currentActiveGame = game;
+      activeGameTitle.textContent = game.title;
+      
+      homeView.style.display = "none";
+      gameView.style.display = "flex";
+      loader.style.display = "flex";
+      gameIframe.srcdoc = "";
+
+      try {
+        const response = await fetch(game.downloadUrl);
+        if (!response.ok) throw new Error("Failed fetching HTML source.");
+
+        const htmlContent = await response.text();
+        gameIframe.srcdoc = htmlContent;
+        loader.style.display = "none";
+      } catch (err) {
+        console.error(err);
+        loader.innerHTML = `
+          <div style="color: var(--accent-coral); text-align: center;">
+            <p style="font-size: 1.1rem; font-weight: 700;">Failed to launch game</p>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem;">Could not download game payload.</p>
+          </div>
+        `;
+      }
+    }
+
+    function goHome() {
+      if (document.fullscreenElement) document.exitFullscreen();
+      gameView.style.display = "none";
+      homeView.style.display = "flex";
+      gameIframe.srcdoc = ""; 
+      currentActiveGame = null;
+    }
+
+    function reloadGame() {
+      if (currentActiveGame) launchGame(currentActiveGame);
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        gameView.requestFullscreen().catch(err => alert(err.message));
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function filterCategory(cat, element) {
+      currentFilter = cat;
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      element.classList.add('active');
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+      const filtered = allGames.filter(g => {
+        const matchesCategory = (currentFilter === 'ALL') || g.category === currentFilter;
+        const matchesSearch = g.title.toLowerCase().includes(searchTerm) || g.rawName.toLowerCase().includes(searchTerm);
+        return matchesCategory && matchesSearch;
+      });
+      renderGrid(filtered);
+    }
+
+    document.getElementById("searchInput").addEventListener("input", applyFilters);
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && gameView.style.display === "flex") goHome();
+    });
+
+    // Run Catalog Loader on Boot
+    fetchCatalogFromGitHub();
+  </script>
 </body>
 </html>
