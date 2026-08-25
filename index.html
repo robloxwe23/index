@@ -1,717 +1,620 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>GOOGLE DRIVE</title>
-  <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@200;500&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEXUS // HTML5 Game Vault</title>
+  
+  <!-- Premium Modern Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+
   <style>
-    :root { 
-        --primary: #007aff; 
-        --secondary: #00aaff; 
-        --glass: rgba(255, 255, 255, 0.03);
-        --blur: 15px;
-        --card-radius: 20px;
-        --card-scale: 1.1;
-        --anim-speed: 0.6s;
-    }
-    body { margin: 0; font-family: 'Arial', sans-serif; background: #000; color: white; overflow: hidden; height: 100vh; user-select: none; touch-action: none; background-size: cover; background-position: center; }
-    
-    .liquid-glass-pane {
-        position: fixed;
-        inset: 0;
-        z-index: -1;
-        background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.05) 100%);
-        pointer-events: none;
-        box-shadow: inset 0 0 100px rgba(0,0,0,0.5);
-    }
-    .liquid-glass-pane::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: url('https://www.transparenttextures.com/patterns/glass-knobs.png');
-        opacity: 0.03;
+    /* ================= DESIGN SYSTEM ================= */
+    :root {
+      --bg-main: #06070a;
+      --bg-surface: #0e1117;
+      --bg-card: #141824;
+      --bg-card-hover: #1b2131;
+      
+      --border-subtle: rgba(255, 255, 255, 0.07);
+      --border-accent: rgba(0, 240, 255, 0.3);
+      
+      --accent-cyan: #00f0ff;
+      --accent-violet: #8b5cf6;
+      --accent-emerald: #10b981;
+      --accent-coral: #ff4757;
+      
+      --text-main: #f3f4f6;
+      --text-muted: #8a94a6;
+      --text-dim: #505a69;
+      
+      --font-heading: 'Space Grotesk', sans-serif;
+      --font-body: 'Outfit', sans-serif;
+      --nav-height: 60px;
     }
 
-    #scanlines { position: fixed; inset: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 255, 0, 0.03)); z-index: 50; background-size: 100% 4px, 3px 100%; pointer-events: none; display: none; }
-    #noise-layer { position: fixed; inset: 0; background: url('https://grainy-gradients.vercel.app/noise.svg'); opacity: 0.05; z-index: 49; pointer-events: none; display: none; filter: contrast(150%) brightness(100%); }
-
-    #glcanvas { position: fixed; inset: 0; z-index: -2; display: block; }
-    
-    .gui-overlay { position: fixed; inset: 0; background: radial-gradient(circle, transparent 20%, rgba(0,0,0,0.6) 100%); z-index: -1; pointer-events: none; transition: background 0.5s; }
-
-    #loading-screen { position: fixed; inset: 0; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; transition: opacity 1.5s ease; }
-    #loading-screen.hidden { opacity: 0; pointer-events: none; }
-    .loading-bar-container { width: 300px; height: 6px; background: rgba(255,255,255,0.1); border-radius: 5px; margin-top: 40px; overflow: hidden; position: relative; }
-    .loading-fill { width: 0%; height: 100%; background: var(--primary); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 15px var(--primary); }
-    .loading-text { margin-top: 15px; font-family: 'Orbitron'; font-size: 0.7em; letter-spacing: 2px; color: var(--secondary); animation: pulse 1.5s infinite; }
-    
-    /* GAME SANDBOX LOADING SCREEN */
-    #game-loading-overlay {
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.95);
-        backdrop-filter: blur(10px);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        z-index: 210;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s ease;
-    }
-    #game-loading-overlay.active {
-        opacity: 1;
-        pointer-events: auto;
-    }
-    .sandbox-spinner {
-        width: 80px;
-        height: 80px;
-        border: 4px solid rgba(255, 255, 255, 0.1);
-        border-top: 4px solid var(--primary);
-        border-right: 4px solid var(--secondary);
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        box-shadow: 0 0 20px var(--primary);
-    }
-    .sandbox-loading-text {
-        margin-top: 25px;
-        font-family: 'Orbitron', sans-serif;
-        font-size: 0.85em;
-        letter-spacing: 2px;
-        color: #fff;
-        text-align: center;
-        padding: 0 20px;
-        text-transform: uppercase;
-        animation: pulse 1.5s infinite;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
     }
 
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-    #name-screen { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 90; }
-    #name-screen.active { display: flex; }
-    .name-box { 
-        background: rgba(255,255,255,0.05); 
-        padding: 50px; 
-        border-radius: 30px; 
-        backdrop-filter: blur(var(--blur)); 
-        text-align: center; 
-        border: 1px solid rgba(255,255,255,0.1); 
-        box-shadow: 0 0 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.05); 
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.08) 0%, transparent 60%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 32px 32px, 32px 32px;
     }
-    #name-input { padding: 18px; width: 280px; background: rgba(0,0,0,0.3); border: 1px solid var(--primary); border-radius: 12px; color: white; text-align: center; margin-bottom: 25px; outline: none; font-family: 'Orbitron'; font-size: 1em; transition: 0.3s; }
-    #name-input:focus { box-shadow: 0 0 20px var(--primary); border-color: var(--secondary); }
-    #name-btn { padding: 15px 50px; background: var(--primary); border: none; border-radius: 50px; color: white; cursor: pointer; font-weight: bold; font-family: 'Orbitron'; letter-spacing: 2px; transition: 0.3s; }
-    #name-btn:hover { background: var(--secondary); transform: scale(1.05); }
 
-    .container { display: flex; flex-direction: column; height: 100vh; opacity: 0; transition: opacity 1s ease; z-index: 1; }
-    .container.visible { opacity: 1; }
-    .header { display: flex; align-items: center; justify-content: space-between; padding: 15px 30px; }
-    .live-clock { font-size: 1.4em; color: var(--secondary); font-weight: bold; font-family: 'Dosis', sans-serif; }
-    
-    .header-actions { display: flex; align-items: center; gap: 15px; }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-main); }
+    ::-webkit-scrollbar-thumb { background: #1e2433; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
 
-    /* EXPANDABLE SEARCH BAR */
-    .search-wrapper {
-      position: relative;
+    /* ================= HOME VIEW ================= */
+    #homeView {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background: rgba(14, 17, 23, 0.85);
+      backdrop-filter: blur(16px);
+      padding: 0.8rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .brand {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
-      width: 45px;
-      height: 45px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 50px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.15);
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      overflow: hidden;
+      gap: 0.75rem;
     }
-    .search-wrapper.expanded {
-      width: 250px;
-      border-color: var(--primary);
-      box-shadow: 0 0 15px var(--primary);
-    }
-    .search-btn {
-      min-width: 45px;
-      height: 45px;
-      border: none;
-      background: transparent;
-      color: white;
-      font-size: 18px;
-      cursor: pointer;
+
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      outline: none;
-      z-index: 2;
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: #000;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
     }
-    .search-input {
+
+    .brand-title {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+    }
+
+    .brand-title span { color: var(--accent-cyan); }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.1);
+      padding: 0.25rem 0.6rem;
+      border-radius: 20px;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent-emerald);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent-emerald);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .search-container {
+      position: relative;
+      width: 280px;
+    }
+
+    .search-bar {
       width: 100%;
-      height: 100%;
-      background: transparent;
-      border: none;
+      padding: 0.6rem 1rem 0.6rem 2.5rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(0, 0, 0, 0.4);
+      color: var(--text-main);
+      font-size: 0.875rem;
       outline: none;
-      color: white;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.8em;
-      padding: 0 45px 0 15px;
-      opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: all 0.2s ease;
+    }
+
+    .search-bar:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
+      background: rgba(0, 0, 0, 0.6);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      font-size: 0.9rem;
       pointer-events: none;
     }
-    .search-wrapper.expanded .search-input {
+
+    main {
+      padding: 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+
+    .pill {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 0.5rem 1.25rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .pill:hover {
+      color: var(--text-main);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .pill.active {
+      background: var(--accent-cyan);
+      color: #000;
+      border-color: var(--accent-cyan);
+      font-weight: 700;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .game-card {
+      background: var(--bg-card);
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .game-card:hover {
+      transform: translateY(-6px) scale(1.01);
+      border-color: var(--border-accent);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 240, 255, 0.1);
+      background: var(--bg-card-hover);
+    }
+
+    .card-cover {
+      height: 140px;
+      width: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+    }
+
+    .cover-pattern {
+      position: absolute;
+      inset: 0;
+      opacity: 0.15;
+      background-image: radial-gradient(#fff 1px, transparent 1px);
+      background-size: 12px 12px;
+    }
+
+    .cover-icon {
+      font-size: 3rem;
+      z-index: 2;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.4));
+      transition: transform 0.3s ease;
+    }
+
+    .game-card:hover .cover-icon {
+      transform: scale(1.15) rotate(-3deg);
+    }
+
+    .card-body {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      flex: 1;
+    }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: auto;
+      padding-top: 0.4rem;
+    }
+
+    .play-btn-hint {
+      color: var(--accent-cyan);
+      font-weight: 600;
+      opacity: 0;
+      transform: translateX(-5px);
+      transition: all 0.2s ease;
+    }
+
+    .game-card:hover .play-btn-hint {
       opacity: 1;
-      pointer-events: auto;
+      transform: translateX(0);
     }
 
-    .section-tabs { display: flex; justify-content: flex-start; gap: 10px; padding: 10px 20px; overflow-x: auto; scrollbar-width: none; }
-    .tab { padding: 10px 25px; cursor: pointer; border-radius: 25px; transition: 0.3s; background: rgba(255,255,255,0.05); font-size: 0.8em; text-transform: uppercase; white-space: nowrap; border: 1px solid transparent; flex-shrink: 0; backdrop-filter: blur(5px); }
-    .tab.active { background: var(--primary); border-color: var(--secondary); box-shadow: 0 0 20px var(--primary); }
-
-    .carousel { flex: 1; display: flex; align-items: center; position: relative; overflow: hidden; cursor: grab; }
-    .section { position: absolute; width: 100%; display: none; height: 100%; align-items: center; }
-    .section.active { display: flex; }
-    .cards { display: flex; gap: 40px; transition: transform var(--anim-speed) cubic-bezier(0.2, 0.8, 0.2, 1); padding-left: 0; min-width: 100%; }
-    .card { min-width: 240px; height: 340px; background-size: cover; background-position: center; border-radius: var(--card-radius); position: relative; transition: all 0.5s; opacity: 0.25; transform: scale(0.85); cursor: pointer; border: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; justify-content: center; align-items: center; }
-    .card.active { 
-        opacity: 1; 
-        transform: scale(var(--card-scale)); 
-        outline: 4px solid var(--primary); 
-        box-shadow: 0 0 50px var(--primary), inset 0 0 30px rgba(255,255,255,0.1); 
-    }
-    .card-icon { font-size: 4rem; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5)); transition: transform 0.3s; }
-    .card:hover .card-icon { transform: scale(1.1); }
-    .card-title { position: absolute; bottom: 0; width: 100%; background: linear-gradient(transparent, rgba(0,0,0,0.9)); text-align: center; padding: 25px 10px 15px 10px; border-radius: 0 0 var(--card-radius) var(--card-radius); font-weight: bold; pointer-events: none; box-sizing: border-box; font-size: 0.9em; }
-
-    .details { 
-        position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; 
-        padding: 20px; background: rgba(0,0,0,0.7); border-radius: 25px; 
-        backdrop-filter: blur(var(--blur)); text-align: center; 
-        border: 1px solid rgba(255,255,255,0.1); pointer-events: auto; 
-        box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.05);
-    }
-    .launch-btn { width: 100%; padding: 15px; background: var(--primary); border: none; color: white; border-radius: 30px; cursor: pointer; font-weight: bold; font-size: 1.1em; }
-
-    #settings-panel { position: fixed; top: 0; right: -400px; width: 340px; height: 100vh; background: rgba(5,5,10,0.95); backdrop-filter: blur(25px); z-index: 400; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); padding: 30px; border-left: 1px solid var(--primary); overflow-y: auto; box-sizing: border-box; scrollbar-width: thin; scrollbar-color: var(--primary) transparent; }
-    #settings-panel.open { right: 0; }
-    .setting-group { margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 20px; }
-    .setting-label { display: block; margin-bottom: 12px; font-size: 0.75em; color: var(--secondary); text-transform: uppercase; letter-spacing: 1px; }
-    .premium-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 10px; color: white; border-radius: 8px; margin-bottom: 10px; outline: none; box-sizing: border-box; }
-    .premium-slider { width: 100%; accent-color: var(--primary); cursor: pointer; }
-
-    #app-window { position: fixed; inset: 0; background: #000; display: none; flex-direction: column; z-index: 200; }
-    #app-header { height: 60px; background: var(--primary); display: flex; align-items: center; padding: 0 25px; justify-content: space-between; }
-    #app-iframe { flex: 1; border: none; }
-
-    .rgb-mode .card.active { animation: rgb-glow 3s linear infinite; }
-    @keyframes rgb-glow {
-        0% { outline-color: #ff0000; box-shadow: 0 0 30px #ff0000; }
-        33% { outline-color: #00ff00; box-shadow: 0 0 30px #00ff00; }
-        66% { outline-color: #0000ff; box-shadow: 0 0 30px #0000ff; }
-        100% { outline-color: #ff0000; box-shadow: 0 0 30px #ff0000; }
+    /* Initial Catalog Skeleton Loading */
+    .catalog-loader {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 5rem 0;
+      gap: 1rem;
+      color: var(--text-muted);
     }
 
-    /* --- DYNAMIC ISLAND PLAYER STYLES --- */
-    .dynamic-island-container {
-        position: fixed;
-        top: 15px;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 300;
-        display: flex;
-        justify-content: center;
-        perspective: 1000px;
+    /* ================= GAME VIEW ================= */
+    #gameView {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      z-index: 1000;
+      display: none;
+      flex-direction: column;
     }
 
-    .player-card {
-        width: 150px; 
-        height: 35px;
-        padding: 5px 15px;
-        border-radius: 45px;
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(25px);
-        -webkit-backdrop-filter: blur(25px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        color: white;
-        transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        cursor: pointer;
-        overflow: hidden;
+    .hud-bar {
+      height: var(--nav-height);
+      background: #090b10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
     }
 
-    .player-card.expanded {
-        width: 340px;
-        height: 580px;
-        padding: 35px;
-        border-radius: 45px;
-        flex-direction: column;
-        justify-content: center;
-        gap: 15px;
-        background: rgba(0, 0, 0, 0.8);
-        cursor: default;
+    .hud-left {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
     }
 
-    .album-art {
-        width: 25px;
-        height: 25px;
-        border-radius: 50%;
-        flex-shrink: 0;
-        background: linear-gradient(to bottom right, var(--primary), var(--secondary));
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        transition: all 0.5s ease;
-    }
-    .album-art::after { content: '🎵'; font-size: 12px; opacity: 0.8; }
-
-    .player-card.expanded .album-art {
-        width: 160px;
-        height: 160px;
-        border-radius: 25px;
-    }
-    .player-card.expanded .album-art::after { font-size: 60px; }
-
-    .track-info {
-        text-align: left;
-        flex-grow: 1;
-        margin: 0 10px;
-        transition: all 0.5s ease;
-        white-space: nowrap;
-        overflow: hidden;
-        display: block;
+    .btn-home {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
     }
 
-    .player-card:not(.expanded) .track-info {
-        max-width: 80px;
+    .btn-home:hover {
+      background: var(--accent-coral);
+      border-color: var(--accent-coral);
+      color: #fff;
+      box-shadow: 0 0 15px rgba(255, 71, 87, 0.4);
     }
 
-    .player-card.expanded .track-info {
-        text-align: center;
-        width: 100%;
-        margin: 0;
+    .btn-home kbd {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 0.1rem 0.3rem;
+      border-radius: 3px;
+      font-size: 0.7rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    .track-title { font-size: 0.75rem; font-weight: 700; }
-    .player-card.expanded .track-title { font-size: 1.2rem; }
-    .track-artist { font-size: 0.6rem; opacity: 0.6; }
-
-    #track-selector {
-        display: none;
-        width: 100%;
-        background: rgba(255,255,255,0.05);
-        border-radius: 15px;
-        padding: 10px;
-        margin-top: 10px;
-        border: 1px solid rgba(255,255,255,0.1);
+    .active-title {
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
     }
-    .player-card.expanded #track-selector { display: block; }
-    .track-option {
-        padding: 8px 12px;
-        font-size: 0.7rem;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: 0.2s;
-        margin-bottom: 5px;
-        border: 1px solid transparent;
-        font-family: 'Orbitron';
-        text-align: left;
+
+    .hud-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-    .track-option:hover { background: rgba(255,255,255,0.1); }
-    .track-option.active { border-color: var(--primary); background: rgba(0,122,255,0.2); }
 
-    .progress-container {
-        width: 100%;
-        height: 14px;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        position: relative;
+    .hud-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 0.5rem 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
     }
-    .player-card.expanded .progress-container { display: flex; }
 
-    .progress-bg { position: absolute; left: 0; width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; pointer-events: none; }
-    .progress-fill { position: absolute; left: 0; height: 6px; width: 0%; background: var(--primary); border-radius: 10px; transition: width 0.1s linear; pointer-events: none; }
-
-    .player-card.playing .progress-fill {
-        height: 12px;
-        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 4'%3E%3Cpath d='M0,2 Q2.5,4 5,2 T10,2 T15,2 T20,2' fill='none' stroke='white' stroke-width='2' /%3E%3C/svg%3E");
-        background-size: 20px 100%;
-        animation: moveWave 0.5s linear infinite;
+    .hud-btn:hover {
+      color: var(--text-main);
+      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
     }
-    @keyframes moveWave { 0% { background-position: 0 0; } 100% { background-position: -20px 0; } }
 
-    .controls { display: flex; align-items: center; gap: 5px; }
-    .player-card.expanded .controls { justify-content: space-between; width: 80%; margin-top: 10px; }
+    .iframe-container {
+      position: relative;
+      width: 100%;
+      height: calc(100vh - var(--nav-height));
+      background: #000;
+    }
 
-    .btn { background: none; border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .btn-main { width: 25px; height: 25px; background: rgba(255,255,255,0.1); border-radius: 50%; }
-    .player-card.expanded .btn-main { width: 60px; height: 60px; background: rgba(255, 255, 255, 0.1); }
-    
-    .btn-side { display: none; opacity: 0; }
-    .player-card.expanded .btn-side { display: flex; opacity: 0.8; }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
 
-    .icon { width: 16px; height: 16px; fill: currentColor; }
-    .player-card.expanded .icon { width: 24px; height: 24px; }
+    .loader-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-main);
+      gap: 1.2rem;
+      z-index: 10;
+    }
 
-    .time-labels { display: none; justify-content: space-between; width: 100%; font-size: 0.7rem; color: #aaa; }
-    .player-card.expanded .time-labels { display: flex; }
+    .spinner-ring {
+      width: 50px;
+      height: 50px;
+      border: 3px solid var(--border-subtle);
+      border-top-color: var(--accent-cyan);
+      border-right-color: var(--accent-violet);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
 
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
 
-  <canvas id="glcanvas"></canvas>
-  <div class="liquid-glass-pane"></div>
-  <div id="scanlines"></div>
-  <div id="noise-layer"></div>
-  <div class="gui-overlay" id="overlay"></div>
+  <!-- ================= HOMEPAGE ================= -->
+  <div id="homeView">
+    <header>
+      <div class="brand">
+        <div class="brand-logo">N</div>
+        <div class="brand-title">NEXUS <span>VAULT</span></div>
+        <div class="status-badge">
+          <div class="status-dot"></div>
+          ONLINE
+        </div>
+      </div>
 
-  <div class="dynamic-island-container">
-    <audio id="audio" preload="metadata"></audio>
-    <div class="player-card" id="playerCard">
-        <div class="album-art"></div>
-        <div class="track-info">
-            <div class="track-title" id="display-title">FREAKTEKK</div>
-            <div class="track-artist" id="display-artist">msht, STXSTN</div>
-        </div>
+      <div class="search-container">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-bar" id="searchInput" placeholder="Search 200+ games..." />
+      </div>
+    </header>
 
-        <div class="progress-container" id="progressContainer">
-            <div class="progress-bg"></div>
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
-        <div class="time-labels">
-            <span id="currentTime">0:00</span>
-            <span id="duration">0:00</span>
-        </div>
+    <main>
+      <div class="filter-bar">
+        <button class="pill active" onclick="filterCategory('ALL', this)">ALL GAMES</button>
+        <button class="pill" onclick="filterCategory('ACTION', this)">ACTION</button>
+        <button class="pill" onclick="filterCategory('SPORTS', this)">SPORTS & RACING</button>
+        <button class="pill" onclick="filterCategory('PUZZLE', this)">PUZZLE</button>
+        <button class="pill" onclick="filterCategory('ARCADE', this)">ARCADE</button>
+      </div>
 
-        <div class="controls">
-            <button class="btn btn-side" id="prevBtn"><svg class="icon" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
-            <button class="btn btn-main" id="playBtn">
-                <svg class="icon" id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                <svg class="icon" id="pauseIcon" viewBox="0 0 24 24" style="display: none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-            </button>
-            <button class="btn btn-side" id="nextBtn"><svg class="icon" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg></button>
-        </div>
+      <div class="section-header">
+        <h2 class="section-title">Repository Catalog</h2>
+        <span id="gameCount" style="font-size: 0.85rem; color: var(--text-dim); font-weight: 600;">LOADING...</span>
+      </div>
 
-        <div id="track-selector">
-            <div style="font-size: 0.5rem; opacity: 0.5; margin-bottom: 5px; letter-spacing: 1px;">DATABASE TRACKS</div>
-            <div id="track-list"></div>
+      <div class="game-grid" id="gameGrid">
+        <div class="catalog-loader">
+          <div class="spinner-ring"></div>
+          <p>Fetching entire game library from GitHub...</p>
         </div>
-    </div>
+      </div>
+    </main>
   </div>
 
-  <div id="loading-screen">
-    <div style="width: 100px; height: 100px;">
-        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="150" cy="150" r="120" fill="none" stroke="#007aff" stroke-width="15" />
-            <path d="M100 150 Q150 70, 200 150" fill="none" stroke="#007aff" stroke-width="20" stroke-linecap="round"/>
-            <rect x="135" y="135" width="30" height="30" rx="5" fill="#007aff" />
-        </svg>
-    </div>
-    <div class="loading-bar-container"><div class="loading-fill" id="loading-fill"></div></div>
-    <div class="loading-text" id="loading-status">INITIALIZING SYSTEMS...</div>
-  </div>
+  <!-- ================= GAME HUD VIEW ================= -->
+  <div id="gameView">
+    <div class="hud-bar">
+      <div class="hud-left">
+        <button class="btn-home" onclick="goHome()">
+          ← Return to Vault <kbd>ESC</kbd>
+        </button>
+        <div class="active-title" id="activeGameTitle">Loading Game...</div>
+      </div>
 
-  <div id="name-screen">
-    <div class="name-box">
-      <h1 style="font-family:'Orbitron'; margin-bottom: 10px; color: var(--primary);">IDENTIFICATION</h1>
-      <p style="font-size: 0.7em; color: rgba(255,255,255,0.5); margin-bottom: 30px; letter-spacing: 2px;">PLEASE ENTER OPERATOR NAME</p>
-      <input type="text" id="name-input" placeholder="Operator ID" autocomplete="off">
-      <br>
-      <button id="name-btn">AUTHORIZE</button>
-    </div>
-  </div>
-
-  <div class="container" id="main-container">
-    <div class="header">
-      <div><h1 id="user-greeting" style="margin:0; font-size:1.2em;">DASHBOARD</h1><div class="live-clock" id="live-clock">00:00:00</div></div>
-      
-      <div class="header-actions">
-        <div class="search-wrapper" id="searchWrapper">
-          <input type="text" id="searchInput" class="search-input" placeholder="SEARCH VAULT..." autocomplete="off">
-          <button class="search-btn" id="searchBtn">🔍</button>
-        </div>
-        
-        <div id="settings-btn" style="font-size: 24px; cursor: pointer; background: rgba(255,255,255,0.1); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">⚙️</div>
+      <div class="hud-controls">
+        <button class="hud-btn" onclick="reloadGame()">🔄 Refresh</button>
+        <button class="hud-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
       </div>
     </div>
 
-    <div class="section-tabs" id="genre-tabs">
-      <div class="tab active" data-section="all">ALL GAMES</div>
-      <div class="tab" data-section="action">ACTION</div>
-      <div class="tab" data-section="sports">SPORTS & RACING</div>
-      <div class="tab" data-section="puzzle">PUZZLE</div>
-      <div class="tab" data-section="arcade">ARCADE</div>
+    <div class="iframe-container">
+      <div class="loader-overlay" id="loader">
+        <div class="spinner-ring"></div>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Injecting Game Code...</p>
+      </div>
+      <iframe id="gameIframe"></iframe>
     </div>
-
-    <div class="carousel" id="carousel-viewport">
-      <div class="section active" id="all-section"><div class="cards" id="all-cards"></div></div>
-      <div class="section" id="action-section"><div class="cards" id="action-cards"></div></div>
-      <div class="section" id="sports-section"><div class="cards" id="sports-cards"></div></div>
-      <div class="section" id="puzzle-section"><div class="cards" id="puzzle-cards"></div></div>
-      <div class="section" id="arcade-section"><div class="cards" id="arcade-cards"></div></div>
-    </div>
-
-    <div class="details">
-      <h2 id="detail-title" style="margin:0 0 5px 0; color:var(--secondary);">Select Interface</h2>
-      <p id="detail-desc" style="margin:0 0 15px 0; opacity:0.8;">Ready for deployment.</p>
-      <button class="launch-btn" id="launch-btn">EXECUTE</button>
-    </div>
-  </div>
-
-  <div id="settings-panel">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-        <h2 style="margin:0; font-size:1.1em; font-family:'Orbitron'">PREMIUM CONFIG</h2>
-        <span id="close-settings" style="cursor:pointer; font-size:28px;">×</span>
-    </div>
-    <div class="setting-group">
-        <label class="setting-label">Accent Color (Hex)</label>
-        <div style="display:flex; gap:10px;">
-            <input type="color" id="accent-picker" class="premium-input" style="width:50px; padding:2px; height:40px;" value="#007aff">
-            <input type="text" id="accent-hex" class="premium-input" placeholder="#007aff">
-        </div>
-    </div>
-    <div class="setting-group">
-        <label class="setting-label">Custom Wallpaper (URL)</label>
-        <input type="text" id="bg-input" class="premium-input" placeholder="https://image.url/pic.jpg">
-        <button id="apply-bg" style="width:100%; padding:8px; background:var(--primary); border:none; color:white; border-radius:5px; cursor:pointer;">Set Wallpaper</button>
-    </div>
-    <div class="setting-group">
-        <label class="setting-label">Interface Blur Intensity</label>
-        <input type="range" id="blur-slider" class="premium-slider" min="0" max="40" value="15">
-    </div>
-    <div class="setting-group">
-        <label class="setting-label">Menu Carousel Speed</label>
-        <input type="range" id="speed-slider" class="premium-slider" min="1" max="15" value="6">
-    </div>
-    <div class="setting-group">
-        <label class="setting-label">Active Card Focus Scale</label>
-        <input type="range" id="scale-slider" class="premium-slider" min="10" max="15" value="11">
-    </div>
-    <div class="setting-group">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <label class="setting-label" style="margin:0;">Sci-Fi Typography</label>
-            <input type="checkbox" id="font-toggle">
-        </div>
-    </div>
-    <div class="setting-group">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <label class="setting-label" style="margin:0;">RGB Glow Mode</label>
-            <input type="checkbox" id="rgb-toggle">
-        </div>
-    </div>
-    <div class="setting-group">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <label class="setting-label" style="margin:0;">Retro Scanlines</label>
-            <input type="checkbox" id="scanline-toggle">
-        </div>
-    </div>
-    <div class="setting-group">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-            <label class="setting-label" style="margin:0;">Digital Grain/Noise</label>
-            <input type="checkbox" id="noise-toggle">
-        </div>
-    </div>
-    <button id="reset-prefs" style="width:100%; padding:12px; background:rgba(255,50,50,0.1); color:#ff5555; border:1px solid #ff5555; border-radius:8px; cursor:pointer; font-weight:bold;">FACTORY RESET</button>
-  </div>
-
-  <div id="app-window">
-    <div id="app-header"><span id="app-title">Application</span><span id="close-app" style="cursor:pointer; font-size:30px;">×</span></div>
-    
-    <div id="game-loading-overlay">
-        <div class="sandbox-spinner"></div>
-        <div class="sandbox-loading-text">Loading game code inside the sandbox... wait a moment</div>
-    </div>
-    
-    <iframe id="app-iframe"></iframe>
   </div>
 
   <script>
-    /* MULTI-TRACK PLAYER LOGIC */
-    const playlist = [
-        {
-            title: "FREAKTEKK",
-            artist: "msht, STXSTN",
-            url: "https://github.com/martiand9-stack/roblox/raw/refs/heads/main/msht,%20STXSTN%20-%20FREAKTEKK%20(Official%20Audio).mp3"
-        },
-        {
-            title: "Riversmelt",
-            artist: "HERO FUNK",
-            url: "https://github.com/martiand9-stack/roblox/raw/refs/heads/main/HERO%20FUNK%20-%20Riversmelt%20(1).mp3"
-        }
-    ];
-
-    let currentTrackIndex = 0;
-    const audio = document.getElementById('audio');
-    const playBtn = document.getElementById('playBtn');
-    const playIcon = document.getElementById('playIcon');
-    const pauseIcon = document.getElementById('pauseIcon');
-    const progressFill = document.getElementById('progressFill');
-    const progressContainer = document.getElementById('progressContainer');
-    const currentTimeEl = document.getElementById('currentTime');
-    const durationEl = document.getElementById('duration');
-    const playerCard = document.getElementById('playerCard');
-    const trackList = document.getElementById('track-list');
-
-    function initPlaylist() {
-        trackList.innerHTML = '';
-        playlist.forEach((track, index) => {
-            const opt = document.createElement('div');
-            opt.className = `track-option ${index === currentTrackIndex ? 'active' : ''}`;
-            opt.innerText = `${track.title} - ${track.artist}`;
-            opt.onclick = (e) => {
-                e.stopPropagation();
-                loadTrack(index);
-                audio.play();
-                updatePlayState(true);
-            };
-            trackList.appendChild(opt);
-        });
-    }
-
-    function loadTrack(index) {
-        currentTrackIndex = index;
-        const track = playlist[index];
-        audio.src = track.url;
-        document.getElementById('display-title').innerText = track.title;
-        document.getElementById('display-artist').innerText = track.artist;
-        initPlaylist();
-    }
-
-    loadTrack(0);
-
-    playerCard.onclick = (e) => {
-        if(e.target.closest('#playBtn') || e.target.closest('#progressContainer') || e.target.closest('.track-option') || e.target.closest('.btn-side')) return;
-        playerCard.classList.toggle('expanded');
-    };
-
-    playBtn.onclick = (e) => {
-        e.stopPropagation();
-        if (audio.paused) { audio.play(); updatePlayState(true); } 
-        else { audio.pause(); updatePlayState(false); }
-    };
-
-    document.getElementById('nextBtn').onclick = (e) => {
-        e.stopPropagation();
-        currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
-        loadTrack(currentTrackIndex);
-        audio.play();
-        updatePlayState(true);
-    };
-
-    document.getElementById('prevBtn').onclick = (e) => {
-        e.stopPropagation();
-        currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
-        loadTrack(currentTrackIndex);
-        audio.play();
-        updatePlayState(true);
-    };
-
-    progressContainer.onclick = (e) => {
-        e.stopPropagation();
-        const rect = progressContainer.getBoundingClientRect();
-        const clickX = e.clientX - rect.left;
-        audio.currentTime = (clickX / rect.width) * audio.duration;
-    };
-
-    function updatePlayState(isPlaying) {
-        if (isPlaying) {
-            playIcon.style.display = 'none';
-            pauseIcon.style.display = 'block';
-            playerCard.classList.add('playing');
-        } else {
-            playIcon.style.display = 'block';
-            pauseIcon.style.display = 'none';
-            playerCard.classList.remove('playing');
-        }
-    }
-
-    audio.ontimeupdate = () => {
-        progressFill.style.width = `${(audio.currentTime / audio.duration) * 100}%`;
-        currentTimeEl.textContent = formatTime(audio.currentTime);
-        if(audio.duration) durationEl.textContent = formatTime(audio.duration);
-    };
-
-    function formatTime(seconds) {
-        if (isNaN(seconds)) return "0:00";
-        const min = Math.floor(seconds / 60);
-        const sec = Math.floor(seconds % 60);
-        return `${min}:${sec < 10 ? '0' : ''}${sec}`;
-    }
-
-    /* SEARCH BAR EXPANSION CONTROLS */
-    const searchWrapper = document.getElementById('searchWrapper');
-    const searchBtn = document.getElementById('searchBtn');
-    const searchInput = document.getElementById('searchInput');
-
-    searchBtn.onclick = (e) => {
-      e.stopPropagation();
-      searchWrapper.classList.toggle('expanded');
-      if (searchWrapper.classList.contains('expanded')) {
-        searchInput.focus();
-      }
-    };
-
-    // Close search input if clicked outside and empty
-    document.addEventListener('click', (e) => {
-      if (!searchWrapper.contains(e.target) && searchInput.value.trim() === '') {
-        searchWrapper.classList.remove('expanded');
-      }
-    });
-
-    /* GITHUB GAMES VAULT DISCOVERY & CATEGORIZATION */
+    // GitHub API Endpoint for the offline games directory
     const REPO_API_URL = "https://api.github.com/repos/CoolDude2349/Offline-HTML-Games-Pack/contents/offline";
+    
     let allGames = [];
-    let currentCategory = 'all';
+    let currentActiveGame = null;
+    let currentFilter = 'ALL';
 
-    async function fetchGames() {
-        try {
-            const res = await fetch(REPO_API_URL);
-            if(!res.ok) throw new Error("API Limit");
-            const files = await res.json();
-            
-            allGames = files
-                .filter(f => f.name.endsWith('.html') || f.name.endsWith('.htm'))
-                .map(f => {
-                    const rawName = f.name.replace(/\.(html|htm)$/i, '');
-                    const title = formatTitle(rawName);
-                    const cat = detectCategory(rawName);
-                    const icon = detectIcon(rawName, cat);
-                    return {
-                        title: title,
-                        desc: `Genre: ${cat.toUpperCase()} | Offline Playable`,
-                        downloadUrl: f.download_url,
-                        category: cat,
-                        icon: icon,
-                        raw: rawName
-                    };
-                });
-            renderAllSections();
-        } catch(e) {
-            console.error(e);
-        }
+    const homeView = document.getElementById("homeView");
+    const gameView = document.getElementById("gameView");
+    const gameGrid = document.getElementById("gameGrid");
+    const gameIframe = document.getElementById("gameIframe");
+    const activeGameTitle = document.getElementById("activeGameTitle");
+    const loader = document.getElementById("loader");
+    const gameCount = document.getElementById("gameCount");
+
+    // 1. Fetch Repository Contents Automatically
+    async function fetchCatalogFromGitHub() {
+      try {
+        const response = await fetch(REPO_API_URL);
+        if (!response.ok) throw new Error("GitHub API limit reached or repo unavailable.");
+
+        const files = await response.json();
+
+        // Filter out non-HTML files
+        allGames = files
+          .filter(file => file.name.endsWith('.html') || file.name.endsWith('.htm'))
+          .map(file => processGameData(file));
+
+        renderGrid(allGames);
+      } catch (err) {
+        console.error(err);
+        gameGrid.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--accent-coral);">
+            <h3>Failed to auto-load GitHub Repository</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Rate limit exceeded or bad connection.</p>
+          </div>
+        `;
+      }
     }
 
+    // 2. Helper to Format Raw Filename -> Clean Game Object
+    function processGameData(file) {
+      const rawName = file.name.replace(/\.(html|htm)$/i, '');
+      const formattedTitle = formatTitle(rawName);
+      const category = detectCategory(rawName);
+      const icon = detectIcon(rawName, category);
+
+      return {
+        id: file.sha,
+        title: formattedTitle,
+        rawName: rawName,
+        category: category,
+        icon: icon,
+        downloadUrl: file.download_url
+      };
+    }
+
+    // Format filename e.g. "angrybirdsspace" -> "Angry Birds Space"
     function formatTitle(str) {
-      let cleaned = str.replace(/([a-z])([0-9])/gi, '$1 $2').replace(/([0-9])([a-z])/gi, '$1 $2').replace(/io$/i, ' .io').replace(/_/g, ' ');
+      // Split digits, uppercase, and special chars nicely
+      let cleaned = str
+        .replace(/([a-z])([0-9])/gi, '$1 $2')
+        .replace(/([0-9])([a-z])/gi, '$1 $2')
+        .replace(/io$/i, ' .io')
+        .replace(/_/g, ' ');
+
+      // Capitalize first letter of every word
       return cleaned.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
     }
 
+    // Categorize game based on keywords in name
     function detectCategory(name) {
       const n = name.toLowerCase();
-      if (n.includes('soccer') || n.includes('basket') || n.includes('football') || n.includes('moto') || n.includes('drive') || n.includes('drift') || n.includes('car') || n.includes('race')) return 'sports';
-      if (n.includes('fnaf') || n.includes('granny') || n.includes('backrooms') || n.includes('tank') || n.includes('shooter') || n.includes('battle') || n.includes('smash')) return 'action';
-      if (n.includes('2048') || n.includes('chess') || n.includes('cuttherope') || n.includes('papas') || n.includes('quiz') || n.includes('riddle')) return 'puzzle';
-      return 'arcade';
+      if (n.includes('soccer') || n.includes('basket') || n.includes('football') || n.includes('moto') || n.includes('drive') || n.includes('drift') || n.includes('car') || n.includes('race')) return 'SPORTS';
+      if (n.includes('fnaf') || n.includes('granny') || n.includes('backrooms') || n.includes('tank') || n.includes('shooter') || n.includes('battle') || n.includes('smash')) return 'ACTION';
+      if (n.includes('2048') || n.includes('chess') || n.includes('cuttherope') || n.includes('papas') || n.includes('quiz') || n.includes('riddle')) return 'PUZZLE';
+      return 'ARCADE';
     }
 
+    // Assign contextual emojis automatically
     function detectIcon(name, category) {
       const n = name.toLowerCase();
       if (n.includes('bird')) return '🎯';
@@ -724,281 +627,120 @@
       if (n.includes('papa')) return '🍕';
       if (n.includes('duck')) return '🦆';
       if (n.includes('run') || n.includes('parkour')) return '🏃';
-      if (category === 'puzzle') return '🧩';
-      if (category === 'action') return '💥';
+      if (category === 'PUZZLE') return '🧩';
+      if (category === 'ACTION') return '💥';
       return '🎮';
     }
 
-    function buildCard(item, index) {
-        const card = document.createElement('div');
-        card.className = `card ${index === 0 ? 'active' : ''}`;
-        card.style.background = 'linear-gradient(135deg, rgba(20,24,36,0.9), rgba(10,13,20,0.9))';
-        card.dataset.title = item.title;
-        card.dataset.desc = item.desc;
-        card.dataset.url = item.downloadUrl;
-        card.innerHTML = `<div class="card-icon">${item.icon}</div><div class="card-title">${item.title}</div>`;
-        return card;
-    }
+    // 3. Render Cards to Grid
+    function renderGrid(list = allGames) {
+      gameGrid.innerHTML = "";
+      gameCount.textContent = `${list.length} TITLES FOUND`;
 
-    function renderAllSections() {
-        const query = searchInput.value.toLowerCase();
-        const categories = ['all', 'action', 'sports', 'puzzle', 'arcade'];
+      if (list.length === 0) {
+        gameGrid.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-dim);">
+            No games found matching your search.
+          </div>
+        `;
+        return;
+      }
+
+      list.forEach(game => {
+        const card = document.createElement("div");
+        card.className = "game-card";
+        card.onclick = () => launchGame(game);
         
-        categories.forEach(cat => {
-            const container = document.getElementById(`${cat}-cards`);
-            container.innerHTML = '';
-            
-            const filtered = allGames.filter(g => {
-                const matchesCat = (cat === 'all') || (g.category === cat);
-                const matchesSearch = g.title.toLowerCase().includes(query) || g.raw.toLowerCase().includes(query);
-                return matchesCat && matchesSearch;
-            });
-
-            if(filtered.length === 0) {
-                container.innerHTML = `<div style="padding: 50px; opacity: 0.5;">No games found matching criteria.</div>`;
-            } else {
-                filtered.forEach((item, index) => {
-                    container.appendChild(buildCard(item, index));
-                });
-            }
-        });
-
-        initCarousel(currentCategory);
-    }
-
-    searchInput.addEventListener('input', () => {
-        renderAllSections();
-    });
-
-    /* BLACK HOLE ENGINE */
-    (function() {
-      const canvas = document.getElementById('glcanvas');
-      const gl = canvas.getContext('webgl');
-      const vs = `attribute vec2 a_position; void main() { gl_Position = vec4(a_position, 0.0, 1.0); }`;
-      const fs = `precision mediump float; uniform float t; uniform vec2 r; uniform vec2 u_offset; uniform float u_zoom;
-        vec2 myTanh(vec2 x) { vec2 ex = exp(x), emx = exp(-x); return (ex - emx) / (ex + emx); }
-        void main() {
-          vec2 uv = (gl_FragCoord.xy * 2.0 - r) / r.y;
-          vec2 p_base = (uv * u_zoom) - u_offset;
-          vec4 o_bg = vec4(0.0), o_anim = vec4(0.0);
-          { vec2 p_img = p_base * mat2(1.0, -1.0, 1.0, 1.0); vec2 l_val = myTanh(p_img * 5.0 + 2.0); l_val = min(l_val, l_val * 3.0);
-            float s_px = abs(p_img.x) < 0.001 ? 0.001 : p_img.x;
-            float term = (0.1 - max(0.01 - dot(p_img, p_img) / 200.0, 0.0) * ((clamp(l_val, -2.0, 0.0).y - l_val.y) / s_px)) / abs(length(p_img) - 0.7);
-            o_bg += vec4(term); o_bg *= max(o_bg, vec4(0.0)); }
-          { vec2 p_anim = p_base / 0.7, d = vec2(-1.0, 1.0); float den = 0.1 + 5.0 / dot(5.0 * p_anim - d, 5.0 * p_anim - d);
-            vec2 c = p_anim * mat2(1.0, 1.0, d.x / den, d.y / den), v = c;
-            v *= mat2(cos(log(length(v)) + t * 0.2 + vec4(0.0, 33.0, 11.0, 0.0))) * 5.0;
-            vec4 acc = vec4(0.0); for (int i = 1; i <= 7; i++) { acc += sin(vec4(v.x, v.y, v.y, v.x)) + 1.0; v += 0.7 * sin(vec2(v.y, v.x) * float(i) + t) / float(i) + 0.5; }
-            o_anim += 1.0 - exp(-exp(c.x * vec4(0.6, -0.4, -1.0, 0.0)) / acc / (0.1 + 0.1 * pow(length(sin(v / 0.3) * 0.2 + c * vec2(1.0, 2.0)) - 1.0, 2.0)) / (1.0 + 7.0 * exp(0.3 * c.y - dot(c, c))) / (0.03 + abs(length(p_anim) - 0.7)) * 0.2); }
-          gl_FragColor = clamp(mix(o_bg, o_anim, 0.5) * 1.5, 0.0, 1.0);
-        }`;
-      const prog = gl.createProgram();
-      const s = (t, c) => { const sh = gl.createShader(t); gl.shaderSource(sh, c); gl.compileShader(sh); return sh; };
-      gl.attachShader(prog, s(gl.VERTEX_SHADER, vs)); gl.attachShader(prog, s(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(prog); gl.useProgram(prog);
-      const rLoc = gl.getUniformLocation(prog, 'r'), tLoc = gl.getUniformLocation(prog, 't'), oLoc = gl.getUniformLocation(prog, 'u_offset'), zLoc = gl.getUniformLocation(prog, 'u_zoom');
-      const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]), gl.STATIC_DRAW);
-      const p = gl.getAttribLocation(prog, 'a_position'); gl.enableVertexAttribArray(p); gl.vertexAttribPointer(p, 2, gl.FLOAT, false, 0, 0);
-      let zoom = 1.0, ox = 0.0, oy = 0.0, lx, ly, isD = false;
-      window.addEventListener('mousedown', e => { if(e.target === canvas) { isD = true; lx = e.clientX; ly = e.clientY; }});
-      window.addEventListener('mousemove', e => { if(!isD) return; ox += ((e.clientX - lx) / canvas.height) * 2.0 * zoom; oy -= ((e.clientY - ly) / canvas.height) * 2.0 * zoom; lx = e.clientX; ly = e.clientY; });
-      window.addEventListener('mouseup', () => isD = false);
-      function render(now) {
-        gl.uniform2f(rLoc, canvas.width, canvas.height); gl.uniform1f(tLoc, now * 0.001); gl.uniform2f(oLoc, ox, oy); gl.uniform1f(zLoc, zoom);
-        gl.drawArrays(gl.TRIANGLES, 0, 6); requestAnimationFrame(render);
-      }
-      window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; gl.viewport(0, 0, canvas.width, canvas.height); });
-      window.dispatchEvent(new Event('resize')); requestAnimationFrame(render);
-    })();
-
-    /* CAROUSEL ENGINE */
-    let startX = 0, prevTranslate = 0, isDragging = false, activeIndex = 0;
-
-    function initCarousel(id) {
-      const container = document.getElementById(`${id}-cards`);
-      if(!container) return;
-      const cards = container.querySelectorAll('.card');
-      activeIndex = 0;
-      if(cards.length > 0) {
-        updatePosition(container, cards);
-      } else {
-        document.getElementById('detail-title').innerText = "No Games";
-        document.getElementById('detail-desc').innerText = "No matches available.";
-      }
-
-      container.onmousedown = container.ontouchstart = (e) => {
-        isDragging = true;
-        startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-        container.style.transition = 'none';
-      };
-
-      window.onmousemove = window.ontouchmove = (e) => {
-        if (!isDragging) return;
-        const x = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-        container.style.transform = `translateX(${prevTranslate + (x - startX)}px)`;
-      };
-
-      window.onmouseup = window.ontouchend = () => {
-        if (!isDragging) return;
-        isDragging = false;
-        container.style.transition = 'transform var(--anim-speed) cubic-bezier(0.2, 0.8, 0.2, 1)';
-        const center = window.innerWidth / 2;
-        let minDistance = Infinity;
-        cards.forEach((card, i) => {
-          const rect = card.getBoundingClientRect();
-          const dist = Math.abs(center - (rect.left + rect.width / 2));
-          if (dist < minDistance) { minDistance = dist; activeIndex = i; }
-        });
-        updatePosition(container, cards);
-      };
-      cards.forEach((c, i) => { c.onclick = () => { activeIndex = i; updatePosition(container, cards); }; });
-    }
-
-    function updatePosition(container, cards) {
-      if(!cards || cards.length === 0) return;
-      const cardWidth = 240 + 40;
-      const offset = (window.innerWidth / 2) - (cardWidth * activeIndex) - (240 / 2);
-      prevTranslate = offset;
-      container.style.transform = `translateX(${offset}px)`;
-      cards.forEach((c, i) => {
-        c.classList.toggle('active', i === activeIndex);
-        if(i === activeIndex) {
-          document.getElementById('detail-title').innerText = c.dataset.title;
-          document.getElementById('detail-desc').innerText = c.dataset.desc;
-        }
+        card.innerHTML = `
+          <div class="card-cover">
+            <div class="cover-pattern"></div>
+            <span class="cover-icon">${game.icon}</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title" title="${game.title}">${game.title}</div>
+            <div class="card-meta">
+              <span>${game.category}</span>
+              <span class="play-btn-hint">PLAY ▶</span>
+            </div>
+          </div>
+        `;
+        gameGrid.appendChild(card);
       });
     }
 
-    /* PREMIUM SETTINGS ENGINE */
-    const premiumActions = {
-        accent: (hex) => {
-            document.documentElement.style.setProperty('--primary', hex);
-            document.documentElement.style.setProperty('--secondary', hex + 'aa');
-            document.getElementById('accent-picker').value = hex;
-            document.getElementById('accent-hex').value = hex;
-        },
-        bg: (url) => { document.body.style.backgroundImage = url ? `url('${url}')` : 'none'; document.getElementById('glcanvas').style.opacity = url ? '0' : '1'; },
-        blur: (val) => document.documentElement.style.setProperty('--blur', val + 'px'),
-        speed: (val) => document.documentElement.style.setProperty('--anim-speed', (val / 10) + 's'),
-        scale: (val) => document.documentElement.style.setProperty('--card-scale', val/10),
-        font: (state) => document.body.style.fontFamily = state ? "'Orbitron', sans-serif" : "'Arial', sans-serif"
-    };
+    // 4. Launch Game
+    async function launchGame(game) {
+      currentActiveGame = game;
+      activeGameTitle.textContent = game.title;
+      
+      homeView.style.display = "none";
+      gameView.style.display = "flex";
+      loader.style.display = "flex";
+      gameIframe.srcdoc = "";
 
-    document.getElementById('settings-btn').onclick = () => document.getElementById('settings-panel').classList.add('open');
-    document.getElementById('close-settings').onclick = () => document.getElementById('settings-panel').classList.remove('open');
+      try {
+        const response = await fetch(game.downloadUrl);
+        if (!response.ok) throw new Error("Failed fetching HTML source.");
 
-    document.getElementById('accent-picker').oninput = (e) => { premiumActions.accent(e.target.value); localStorage.setItem('mega-accent', e.target.value); };
-    document.getElementById('accent-hex').onchange = (e) => { premiumActions.accent(e.target.value); localStorage.setItem('mega-accent', e.target.value); };
-    document.getElementById('apply-bg').onclick = () => { const url = document.getElementById('bg-input').value; premiumActions.bg(url); localStorage.setItem('mega-custom-bg', url); };
-    document.getElementById('blur-slider').oninput = (e) => { premiumActions.blur(e.target.value); localStorage.setItem('mega-blur', e.target.value); };
-    document.getElementById('speed-slider').oninput = (e) => { premiumActions.speed(e.target.value); localStorage.setItem('mega-speed', e.target.value); };
-    document.getElementById('scale-slider').oninput = (e) => { premiumActions.scale(e.target.value); localStorage.setItem('mega-scale', e.target.value); };
-    document.getElementById('font-toggle').onchange = (e) => { premiumActions.font(e.target.checked); localStorage.setItem('mega-font', e.target.checked); };
-    document.getElementById('rgb-toggle').onchange = (e) => { document.body.classList.toggle('rgb-mode', e.target.checked); localStorage.setItem('mega-rgb', e.target.checked); };
-    document.getElementById('scanline-toggle').onchange = (e) => { document.getElementById('scanlines').style.display = e.target.checked ? 'block' : 'none'; localStorage.setItem('mega-scanlines', e.target.checked); };
-    document.getElementById('noise-toggle').onchange = (e) => { document.getElementById('noise-layer').style.display = e.target.checked ? 'block' : 'none'; localStorage.setItem('mega-noise', e.target.checked); };
-    document.getElementById('reset-prefs').onclick = () => { localStorage.clear(); location.reload(); };
+        const htmlContent = await response.text();
+        gameIframe.srcdoc = htmlContent;
+        loader.style.display = "none";
+      } catch (err) {
+        console.error(err);
+        loader.innerHTML = `
+          <div style="color: var(--accent-coral); text-align: center;">
+            <p style="font-size: 1.1rem; font-weight: 700;">Failed to launch game</p>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.3rem;">Could not download game payload.</p>
+          </div>
+        `;
+      }
+    }
 
-    /* TAB SYSTEM */
-    document.querySelectorAll('.tab').forEach(t => {
-      t.onclick = () => {
-        document.querySelectorAll('.tab').forEach(x => x.classList.remove('active')); t.classList.add('active');
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        currentCategory = t.dataset.section;
-        document.getElementById(currentCategory + '-section').classList.add('active');
-        initCarousel(currentCategory);
-      };
+    function goHome() {
+      if (document.fullscreenElement) document.exitFullscreen();
+      gameView.style.display = "none";
+      homeView.style.display = "flex";
+      gameIframe.srcdoc = ""; 
+      currentActiveGame = null;
+    }
+
+    function reloadGame() {
+      if (currentActiveGame) launchGame(currentActiveGame);
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        gameView.requestFullscreen().catch(err => alert(err.message));
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function filterCategory(cat, element) {
+      currentFilter = cat;
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      element.classList.add('active');
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+      const filtered = allGames.filter(g => {
+        const matchesCategory = (currentFilter === 'ALL') || g.category === currentFilter;
+        const matchesSearch = g.title.toLowerCase().includes(searchTerm) || g.rawName.toLowerCase().includes(searchTerm);
+        return matchesCategory && matchesSearch;
+      });
+      renderGrid(filtered);
+    }
+
+    document.getElementById("searchInput").addEventListener("input", applyFilters);
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && gameView.style.display === "flex") goHome();
     });
 
-    /* GAME LAUNCHER ENGINE WITH SANDBOX LOADING */
-    document.getElementById('launch-btn').onclick = async () => {
-      const active = document.querySelector('.section.active .card.active');
-      if(active && active.dataset.url) {
-        const overlay = document.getElementById('game-loading-overlay');
-        document.getElementById('app-title').innerText = active.dataset.title;
-        document.getElementById('app-window').style.display = 'flex';
-        
-        // Show loading screen inside the sandbox
-        overlay.classList.add('active');
-        document.getElementById('app-iframe').srcdoc = ''; 
-        
-        try {
-            const response = await fetch(active.dataset.url);
-            if(!response.ok) throw new Error("Payload fail");
-            const html = await response.text();
-            
-            // Brief pause to ensure loading screen is visible smoothly
-            setTimeout(() => {
-                document.getElementById('app-iframe').srcdoc = html;
-                overlay.classList.remove('active');
-            }, 600);
-        } catch(err) {
-            overlay.classList.remove('active');
-            document.getElementById('app-iframe').srcdoc = `<h2 style="color:white;text-align:center;padding-top:20%;">Failed to load payload.</h2>`;
-        }
-      }
-    };
-    document.getElementById('close-app').onclick = () => { 
-        document.getElementById('app-window').style.display = 'none'; 
-        document.getElementById('app-iframe').srcdoc = ''; 
-        document.getElementById('game-loading-overlay').classList.remove('active');
-    };
-
-    /* INITIALIZATION */
-    window.onload = async () => {
-        const savedName = localStorage.getItem('mega-name');
-        const savedAccent = localStorage.getItem('mega-accent');
-        const savedRGB = localStorage.getItem('mega-rgb') === 'true';
-        const savedScan = localStorage.getItem('mega-scanlines') === 'true';
-        const savedNoise = localStorage.getItem('mega-noise') === 'true';
-        const savedBG = localStorage.getItem('mega-custom-bg');
-        const savedBlur = localStorage.getItem('mega-blur');
-        const savedSpeed = localStorage.getItem('mega-speed');
-        const savedScale = localStorage.getItem('mega-scale');
-        const savedFont = localStorage.getItem('mega-font') === 'true';
-
-        if(savedAccent) premiumActions.accent(savedAccent);
-        if(savedRGB) { document.getElementById('rgb-toggle').checked = true; document.body.classList.add('rgb-mode'); }
-        if(savedScan) { document.getElementById('scanline-toggle').checked = true; document.getElementById('scanlines').style.display = 'block'; }
-        if(savedNoise) { document.getElementById('noise-toggle').checked = true; document.getElementById('noise-layer').style.display = 'block'; }
-        if(savedBG) { document.getElementById('bg-input').value = savedBG; premiumActions.bg(savedBG); }
-        if(savedBlur) { document.getElementById('blur-slider').value = savedBlur; premiumActions.blur(savedBlur); }
-        if(savedSpeed) { document.getElementById('speed-slider').value = savedSpeed; premiumActions.speed(savedSpeed); }
-        if(savedScale) { document.getElementById('scale-slider').value = savedScale; premiumActions.scale(savedScale); }
-        if(savedFont) { document.getElementById('font-toggle').checked = true; premiumActions.font(true); }
-
-        await fetchGames();
-
-        let prog = 0;
-        const statusMsgs = ["SYNCHING VAULT...", "FETCHING PAYLOADS...", "PARSING GENRES...", "BUILDING DASHBOARD...", "READY."];
-        let lI = setInterval(() => {
-            prog += Math.random() * 3.5; 
-            if(prog > 100) prog = 100;
-            document.getElementById('loading-fill').style.width = prog + '%';
-            document.getElementById('loading-status').innerText = statusMsgs[Math.floor((prog/100) * (statusMsgs.length - 1))];
-            if(prog >= 100) {
-                clearInterval(lI);
-                setTimeout(() => {
-                    document.getElementById('loading-screen').classList.add('hidden');
-                    if(savedName) {
-                        document.getElementById('user-greeting').innerText = savedName.toUpperCase();
-                        document.getElementById('main-container').classList.add('visible');
-                        initCarousel('all');
-                    } else { document.getElementById('name-screen').classList.add('active'); }
-                }, 800);
-            }
-        }, 120);
-    };
-
-    document.getElementById('name-btn').onclick = () => {
-        const name = document.getElementById('name-input').value || 'OPERATOR';
-        localStorage.setItem('mega-name', name);
-        document.getElementById('user-greeting').innerText = name.toUpperCase();
-        document.getElementById('name-screen').classList.remove('active');
-        document.getElementById('main-container').classList.add('visible');
-        initCarousel('all');
-    };
-
-    setInterval(() => document.getElementById('live-clock').innerText = new Date().toLocaleTimeString(), 1000);
+    // Run Catalog Loader on Boot
+    fetchCatalogFromGitHub();
   </script>
 </body>
 </html>
