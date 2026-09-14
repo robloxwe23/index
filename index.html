@@ -5,36 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NEXUS // HTML5 Game Vault</title>
   
-  <!-- Premium Fonts -->
+  <!-- Premium Modern Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
 
   <style>
     /* ================= DESIGN SYSTEM ================= */
     :root {
-      --bg-main: #05070c;
-      --bg-surface: #0b0e17;
-      --bg-card: rgba(18, 22, 36, 0.75);
-      --bg-card-hover: rgba(28, 35, 56, 0.85);
+      --bg-main: #06070a;
+      --bg-surface: #0e1117;
+      --bg-card: #141824;
+      --bg-card-hover: #1b2131;
       
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-accent: rgba(0, 240, 255, 0.4);
-      --border-glow: rgba(139, 92, 246, 0.3);
+      --border-subtle: rgba(255, 255, 255, 0.07);
+      --border-accent: rgba(0, 240, 255, 0.3);
       
       --accent-cyan: #00f0ff;
       --accent-violet: #8b5cf6;
       --accent-emerald: #10b981;
       --accent-coral: #ff4757;
-      --accent-gold: #fbbf24;
       
       --text-main: #f3f4f6;
-      --text-muted: #94a3b8;
-      --text-dim: #475569;
+      --text-muted: #8a94a6;
+      --text-dim: #505a69;
       
       --font-heading: 'Space Grotesk', sans-serif;
       --font-body: 'Outfit', sans-serif;
-      --nav-height: 64px;
+      --nav-height: 60px;
     }
 
     * {
@@ -51,115 +49,16 @@
       min-height: 100vh;
       overflow-x: hidden;
       background-image: 
-        radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.08) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
-        linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
-      background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+        radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.08) 0%, transparent 60%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 32px 32px, 32px 32px;
     }
 
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: var(--bg-main); }
-    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb { background: #1e2433; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
-
-    /* ================= SPLASH MODAL ================= */
-    .splash-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(3, 5, 10, 0.85);
-      backdrop-filter: blur(20px);
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-      transition: opacity 0.5s ease, visibility 0.5s ease;
-    }
-
-    .splash-overlay.hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
-    }
-
-    .splash-card {
-      background: linear-gradient(145deg, rgba(15, 20, 32, 0.95), rgba(8, 11, 18, 0.95));
-      border: 1px solid var(--border-accent);
-      box-shadow: 0 0 50px rgba(0, 240, 255, 0.15), inset 0 0 20px rgba(255, 255, 255, 0.02);
-      border-radius: 20px;
-      max-width: 540px;
-      width: 100%;
-      padding: 2.5rem;
-      text-align: center;
-      position: relative;
-      animation: modalSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    @keyframes modalSlideUp {
-      from { transform: translateY(30px) scale(0.95); opacity: 0; }
-      to { transform: translateY(0) scale(1); opacity: 1; }
-    }
-
-    .creator-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: rgba(139, 92, 246, 0.12);
-      border: 1px solid rgba(139, 92, 246, 0.3);
-      color: var(--accent-violet);
-      padding: 0.35rem 0.9rem;
-      border-radius: 30px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      margin-bottom: 1.5rem;
-    }
-
-    .splash-title {
-      font-family: var(--font-heading);
-      font-size: 1.8rem;
-      font-weight: 800;
-      margin-bottom: 1rem;
-      background: linear-gradient(135deg, #fff 0%, var(--accent-cyan) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .creator-quote {
-      background: rgba(255, 255, 255, 0.03);
-      border-left: 3px solid var(--accent-cyan);
-      padding: 1.25rem;
-      border-radius: 0 12px 12px 0;
-      margin: 1.25rem 0 2rem 0;
-      text-align: left;
-      font-style: italic;
-      color: #e2e8f0;
-      font-size: 1.05rem;
-      line-height: 1.6;
-    }
-
-    .btn-enter {
-      width: 100%;
-      padding: 1rem;
-      border: none;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
-      color: #000;
-      font-family: var(--font-heading);
-      font-weight: 800;
-      font-size: 1rem;
-      letter-spacing: 1px;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
-    }
-
-    .btn-enter:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
-    }
 
     /* ================= HOME VIEW ================= */
     #homeView {
@@ -169,9 +68,9 @@
     }
 
     header {
-      background: rgba(11, 14, 23, 0.8);
+      background: rgba(14, 17, 23, 0.85);
       backdrop-filter: blur(16px);
-      padding: 0.9rem 2rem;
+      padding: 0.8rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -184,28 +83,28 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 0.85rem;
+      gap: 0.75rem;
     }
 
     .brand-logo {
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
-      border-radius: 10px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: var(--font-heading);
       font-weight: 800;
-      font-size: 1.3rem;
+      font-size: 1.2rem;
       color: #000;
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
     }
 
     .brand-title {
       font-family: var(--font-heading);
-      font-size: 1.3rem;
-      font-weight: 800;
+      font-size: 1.25rem;
+      font-weight: 700;
       letter-spacing: -0.5px;
       text-transform: uppercase;
     }
@@ -215,36 +114,27 @@
     .status-badge {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.4rem;
       font-size: 0.75rem;
-      font-weight: 600;
       color: var(--accent-emerald);
       background: rgba(16, 185, 129, 0.1);
-      padding: 0.35rem 0.85rem;
+      padding: 0.25rem 0.6rem;
       border-radius: 20px;
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      letter-spacing: 0.3px;
+      border: 1px solid rgba(16, 185, 129, 0.2);
     }
 
     .status-dot {
-      width: 7px;
-      height: 7px;
+      width: 6px;
+      height: 6px;
       background: var(--accent-emerald);
       border-radius: 50%;
       box-shadow: 0 0 8px var(--accent-emerald);
       animation: pulse 2s infinite;
-      flex-shrink: 0;
     }
 
     @keyframes pulse {
       0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
+      50% { opacity: 0.4; }
     }
 
     .search-container {
@@ -254,8 +144,8 @@
 
     .search-bar {
       width: 100%;
-      padding: 0.65rem 1rem 0.65rem 2.6rem;
-      border-radius: 10px;
+      padding: 0.6rem 1rem 0.6rem 2.5rem;
+      border-radius: 8px;
       border: 1px solid var(--border-subtle);
       background: rgba(0, 0, 0, 0.4);
       color: var(--text-main);
@@ -266,13 +156,13 @@
 
     .search-bar:focus {
       border-color: var(--accent-cyan);
-      box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.15);
       background: rgba(0, 0, 0, 0.6);
     }
 
     .search-icon {
       position: absolute;
-      left: 0.9rem;
+      left: 0.8rem;
       top: 50%;
       transform: translateY(-50%);
       color: var(--text-dim);
@@ -281,36 +171,27 @@
     }
 
     main {
-      padding: 2.5rem 2rem;
-      max-width: 1440px;
+      padding: 2rem;
+      max-width: 1400px;
       margin: 0 auto;
       width: 100%;
       flex: 1;
     }
 
-    /* Controls Header */
-    .controls-wrapper {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-
     .filter-bar {
       display: flex;
       gap: 0.5rem;
+      margin-bottom: 2rem;
       overflow-x: auto;
-      padding-bottom: 0.25rem;
+      padding-bottom: 0.5rem;
     }
 
     .pill {
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       color: var(--text-muted);
-      padding: 0.55rem 1.25rem;
-      border-radius: 8px;
+      padding: 0.5rem 1.25rem;
+      border-radius: 6px;
       font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
@@ -321,48 +202,30 @@
     .pill:hover {
       color: var(--text-main);
       border-color: rgba(255, 255, 255, 0.2);
-      background: rgba(255, 255, 255, 0.03);
     }
 
     .pill.active {
-      background: linear-gradient(135deg, var(--accent-cyan), rgba(0, 240, 255, 0.7));
+      background: var(--accent-cyan);
       color: #000;
       border-color: var(--accent-cyan);
       font-weight: 700;
       box-shadow: 0 0 15px rgba(0, 240, 255, 0.25);
     }
 
-    .sort-select {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-muted);
-      padding: 0.55rem 1rem;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      outline: none;
-      cursor: pointer;
-    }
-
     .section-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.5rem;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      margin-bottom: 1.25rem;
     }
 
     .section-title {
       font-family: var(--font-heading);
       font-size: 1.1rem;
       font-weight: 700;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       text-transform: uppercase;
       color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
     }
 
     .game-grid {
@@ -371,78 +234,60 @@
       gap: 1.5rem;
     }
 
-    /* Card Component */
     .game-card {
       background: var(--bg-card);
-      backdrop-filter: blur(10px);
-      border-radius: 14px;
+      border-radius: 12px;
       border: 1px solid var(--border-subtle);
       overflow: hidden;
       cursor: pointer;
       position: relative;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
       flex-direction: column;
     }
 
     .game-card:hover {
-      transform: translateY(-6px);
+      transform: translateY(-6px) scale(1.01);
       border-color: var(--border-accent);
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 240, 255, 0.12);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 240, 255, 0.1);
       background: var(--bg-card-hover);
     }
 
     .card-cover {
-      height: 145px;
+      height: 140px;
       width: 100%;
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      background: linear-gradient(135deg, #131b2e, #0b101d);
+      background: linear-gradient(135deg, #1e293b, #0f172a);
     }
 
     .cover-pattern {
       position: absolute;
       inset: 0;
-      opacity: 0.2;
-      background-image: radial-gradient(rgba(255, 255, 255, 0.4) 1px, transparent 1px);
-      background-size: 14px 14px;
+      opacity: 0.15;
+      background-image: radial-gradient(#fff 1px, transparent 1px);
+      background-size: 12px 12px;
     }
 
     .cover-icon {
-      font-size: 3.2rem;
+      font-size: 3rem;
       z-index: 2;
-      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
-      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.4));
+      transition: transform 0.3s ease;
     }
 
     .game-card:hover .cover-icon {
-      transform: scale(1.2) rotate(-4deg);
-    }
-
-    .fav-star {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      z-index: 5;
-      font-size: 1.1rem;
-      color: rgba(255, 255, 255, 0.3);
-      transition: all 0.2s ease;
-      padding: 4px;
-    }
-
-    .fav-star:hover, .fav-star.active {
-      color: var(--accent-gold);
-      transform: scale(1.2);
+      transform: scale(1.15) rotate(-3deg);
     }
 
     .card-body {
-      padding: 1.1rem;
+      padding: 1rem;
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.4rem;
       flex: 1;
     }
 
@@ -463,28 +308,15 @@
       font-size: 0.75rem;
       color: var(--text-muted);
       margin-top: auto;
-      padding-top: 0.5rem;
-    }
-
-    .category-tag {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.5px;
+      padding-top: 0.4rem;
     }
 
     .play-btn-hint {
       color: var(--accent-cyan);
-      font-weight: 700;
+      font-weight: 600;
       opacity: 0;
-      transform: translateX(-6px);
-      transition: all 0.25s ease;
-      display: flex;
-      align-items: center;
-      gap: 0.2rem;
+      transform: translateX(-5px);
+      transition: all 0.2s ease;
     }
 
     .game-card:hover .play-btn-hint {
@@ -492,149 +324,19 @@
       transform: translateX(0);
     }
 
+    /* Initial Catalog Skeleton Loading */
     .catalog-loader {
       grid-column: 1 / -1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 6rem 0;
-      gap: 1.2rem;
+      padding: 5rem 0;
+      gap: 1rem;
       color: var(--text-muted);
     }
 
-    /* ================= CHAT WIDGET STYLES ================= */
-    #chat-widget-container {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 999;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-    }
-
-    .chat-toggle-btn {
-      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
-      color: #000;
-      border: none;
-      padding: 0.6rem 1.1rem;
-      border-radius: 20px;
-      font-family: var(--font-heading);
-      font-weight: 800;
-      font-size: 0.85rem;
-      cursor: pointer;
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: all 0.2s ease;
-    }
-
-    .chat-toggle-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 25px rgba(0, 240, 255, 0.5);
-    }
-
-    #chat {
-      width: 360px;
-      max-width: calc(100vw - 30px);
-      border: 1px solid var(--border-accent);
-      border-radius: 12px;
-      overflow: hidden;
-      font-family: var(--font-body);
-      background: rgba(11, 14, 23, 0.95);
-      backdrop-filter: blur(16px);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 240, 255, 0.15);
-      margin-top: 10px;
-      transition: all 0.3s ease;
-    }
-
-    #chat.collapsed {
-      display: none;
-    }
-
-    .chat-header {
-      background: rgba(18, 22, 36, 0.9);
-      padding: 8px 12px;
-      border-bottom: 1px solid var(--border-subtle);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-family: var(--font-heading);
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--accent-cyan);
-    }
-
-    #chat-messages {
-      height: 240px;
-      overflow-y: auto;
-      padding: 10px;
-      background: rgba(5, 7, 12, 0.6);
-      font-size: 0.85rem;
-      color: var(--text-main);
-    }
-
-    #chat-messages div {
-      margin-bottom: 6px;
-      line-height: 1.4;
-      word-break: break-word;
-    }
-
-    #chat-messages b {
-      color: var(--accent-cyan);
-    }
-
-    .chat-input-row {
-      display: flex;
-      gap: 4px;
-      padding: 8px;
-      border-top: 1px solid var(--border-subtle);
-      background: var(--bg-surface);
-    }
-
-    #chat-user, #chat-msg {
-      padding: 6px 10px;
-      border: 1px solid var(--border-subtle);
-      border-radius: 6px;
-      background: rgba(0, 0, 0, 0.4);
-      color: var(--text-main);
-      font-size: 0.8rem;
-      outline: none;
-      transition: border-color 0.2s ease;
-    }
-
-    #chat-user:focus, #chat-msg:focus {
-      border-color: var(--accent-cyan);
-    }
-
-    #chat-user {
-      flex: 0 0 85px;
-    }
-
-    #chat-msg {
-      flex: 1;
-    }
-
-    #chat-send {
-      padding: 6px 12px;
-      border: 0;
-      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
-      color: #000;
-      font-family: var(--font-heading);
-      font-weight: 700;
-      font-size: 0.8rem;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: opacity 0.2s ease;
-    }
-
-    #chat-send:hover {
-      opacity: 0.9;
-    }
-
-    /* ================= GAME HUD VIEW ================= */
+    /* ================= GAME VIEW ================= */
     #gameView {
       position: fixed;
       inset: 0;
@@ -648,7 +350,7 @@
 
     .hud-bar {
       height: var(--nav-height);
-      background: #080b11;
+      background: #090b10;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -659,7 +361,7 @@
     .hud-left {
       display: flex;
       align-items: center;
-      gap: 1.25rem;
+      gap: 1.5rem;
     }
 
     .btn-home {
@@ -667,7 +369,7 @@
       border: 1px solid var(--border-subtle);
       color: var(--text-main);
       padding: 0.5rem 1rem;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
       font-weight: 600;
       font-size: 0.85rem;
@@ -681,20 +383,20 @@
       background: var(--accent-coral);
       border-color: var(--accent-coral);
       color: #fff;
-      box-shadow: 0 0 20px rgba(255, 71, 87, 0.4);
+      box-shadow: 0 0 15px rgba(255, 71, 87, 0.4);
     }
 
     .btn-home kbd {
-      background: rgba(0, 0, 0, 0.4);
-      padding: 0.15rem 0.4rem;
-      border-radius: 4px;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 0.1rem 0.3rem;
+      border-radius: 3px;
       font-size: 0.7rem;
       border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .active-title {
       font-family: var(--font-heading);
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 700;
       color: var(--text-main);
     }
@@ -702,15 +404,15 @@
     .hud-controls {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 0.5rem;
     }
 
     .hud-btn {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border-subtle);
       color: var(--text-muted);
-      padding: 0.5rem 0.9rem;
-      border-radius: 8px;
+      padding: 0.5rem 0.8rem;
+      border-radius: 6px;
       cursor: pointer;
       font-size: 0.85rem;
       font-weight: 600;
@@ -766,20 +468,6 @@
 </head>
 <body>
 
-  <!-- ================= CREATOR NOTE SPLASH MODAL ================= -->
-  <div class="splash-overlay" id="splashModal">
-    <div class="splash-card">
-      <div class="creator-badge">⚡ CREATOR MESSAGE</div>
-      <h2 class="splash-title">Welcome to NEXUS Vault</h2>
-      
-      <div class="creator-quote">
-        "This website was created to bring games back to students. It's hard to maintain this page, but I'm trying my hardest."
-      </div>
-
-      <button class="btn-enter" onclick="closeSplash()">ENTER VAULT ▶</button>
-    </div>
-  </div>
-
   <!-- ================= HOMEPAGE ================= -->
   <div id="homeView">
     <header>
@@ -788,67 +476,37 @@
         <div class="brand-title">NEXUS <span>VAULT</span></div>
         <div class="status-badge">
           <div class="status-dot"></div>
-          <span id="people-connected">People connected: …</span>
+          ONLINE
         </div>
       </div>
 
-      <div class="header-actions">
-        <div class="search-container">
-          <span class="search-icon">🔍</span>
-          <input type="text" class="search-bar" id="searchInput" placeholder="Search library..." />
-        </div>
+      <div class="search-container">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-bar" id="searchInput" placeholder="Search 200+ games..." />
       </div>
     </header>
 
     <main>
-      <div class="controls-wrapper">
-        <div class="filter-bar">
-          <button class="pill active" onclick="filterCategory('ALL', this)">ALL GAMES</button>
-          <button class="pill" onclick="filterCategory('FAVORITES', this)">⭐ FAVORITES</button>
-          <button class="pill" onclick="filterCategory('ACTION', this)">ACTION</button>
-          <button class="pill" onclick="filterCategory('SPORTS', this)">SPORTS & RACING</button>
-          <button class="pill" onclick="filterCategory('PUZZLE', this)">PUZZLE</button>
-          <button class="pill" onclick="filterCategory('ARCADE', this)">ARCADE</button>
-        </div>
-
-        <select class="sort-select" id="sortSelect" onchange="applyFilters()">
-          <option value="az">Sort: A to Z</option>
-          <option value="za">Sort: Z to A</option>
-        </select>
+      <div class="filter-bar">
+        <button class="pill active" onclick="filterCategory('ALL', this)">ALL GAMES</button>
+        <button class="pill" onclick="filterCategory('ACTION', this)">ACTION</button>
+        <button class="pill" onclick="filterCategory('SPORTS', this)">SPORTS & RACING</button>
+        <button class="pill" onclick="filterCategory('PUZZLE', this)">PUZZLE</button>
+        <button class="pill" onclick="filterCategory('ARCADE', this)">ARCADE</button>
       </div>
 
       <div class="section-header">
-        <h2 class="section-title">
-          <span>🎮</span> Repository Catalog
-        </h2>
-        <span id="gameCount" style="font-size: 0.85rem; color: var(--text-dim); font-weight: 700;">LOADING...</span>
+        <h2 class="section-title">Repository Catalog</h2>
+        <span id="gameCount" style="font-size: 0.85rem; color: var(--text-dim); font-weight: 600;">LOADING...</span>
       </div>
 
       <div class="game-grid" id="gameGrid">
         <div class="catalog-loader">
           <div class="spinner-ring"></div>
-          <p style="letter-spacing: 0.5px;">Fetching game library from GitHub...</p>
+          <p>Fetching entire game library from GitHub...</p>
         </div>
       </div>
     </main>
-  </div>
-
-  <!-- ================= CHAT WIDGET EMBED ================= -->
-  <div id="chat-widget-container">
-    <button class="chat-toggle-btn" onclick="toggleChat()">💬 Live Chat</button>
-    
-    <div id="chat">
-      <div class="chat-header">
-        <span>GLOBAL VAULT CHAT</span>
-        <span style="cursor:pointer; opacity:0.7;" onclick="toggleChat()">✕</span>
-      </div>
-      <div id="chat-messages"></div>
-      <div class="chat-input-row">
-        <input id="chat-user" placeholder="Name">
-        <input id="chat-msg" placeholder="Message…">
-        <button id="chat-send">Send</button>
-      </div>
-    </div>
   </div>
 
   <!-- ================= GAME HUD VIEW ================= -->
@@ -856,7 +514,7 @@
     <div class="hud-bar">
       <div class="hud-left">
         <button class="btn-home" onclick="goHome()">
-          ← Vault <kbd>ESC</kbd>
+          ← Return to Vault <kbd>ESC</kbd>
         </button>
         <div class="active-title" id="activeGameTitle">Loading Game...</div>
       </div>
@@ -870,105 +528,17 @@
     <div class="iframe-container">
       <div class="loader-overlay" id="loader">
         <div class="spinner-ring"></div>
-        <p style="color: var(--text-muted); font-size: 0.9rem;">Launching Payload...</p>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Injecting Game Code...</p>
       </div>
       <iframe id="gameIframe"></iframe>
     </div>
   </div>
 
-  <!-- ================= CHAT API SCRIPT ================= -->
   <script>
-  (function() {
-    const API = 'https://archetypal-quick-talk-flow.base44.app/functions/chat';
-    const box = document.getElementById('chat-messages');
-    let lastLen = 0;
-
-    async function load() {
-      try {
-        const res = await fetch(API);
-        const msgs = await res.json();
-        if (msgs.length !== lastLen) {
-          lastLen = msgs.length;
-          box.innerHTML = msgs.map(m =>
-            `<div><b>${escapeHTML(m.username)}:</b> ${escapeHTML(m.message)}</div>`
-          ).join('');
-          box.scrollTop = box.scrollHeight;
-        }
-      } catch (e) {
-        console.error('Chat error:', e);
-      }
-    }
-
-    function escapeHTML(str) {
-      return String(str || '').replace(/[&<>"']/g, match => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-      })[match]);
-    }
-
-    async function send() {
-      const u = document.getElementById('chat-user').value.trim() || 'anon';
-      const m = document.getElementById('chat-msg').value.trim();
-      if (!m) return;
-      await fetch(API, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: u, message: m })
-      });
-      document.getElementById('chat-msg').value = '';
-      load();
-    }
-
-    document.getElementById('chat-send').onclick = send;
-    document.getElementById('chat-msg').addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
-    load();
-    setInterval(load, 2000); // poll for new messages every 2s
-  })();
-
-  function toggleChat() {
-    const chat = document.getElementById('chat');
-    chat.classList.toggle('collapsed');
-  }
-  </script>
-
-  <!-- ================= PRESENCE HEARTBEAT SCRIPT ================= -->
-  <script>
-    (function() {
-      const API = 'https://archetypal-quick-talk-flow.base44.app/functions/presence';
-      const page = 'nexus-vault';
-      const sessionId = sessionStorage.getItem('sid') || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()+Math.random()));
-      sessionStorage.setItem('sid', sessionId);
-
-      async function heartbeat() {
-        try {
-          const res = await fetch(API, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ session_id: sessionId, page })
-          });
-          const data = await res.json();
-          const target = document.getElementById('people-connected');
-          if (target && data.connected !== undefined) {
-            target.textContent = 'People connected: ' + data.connected;
-          }
-        } catch (err) {
-          console.error('Presence API Error:', err);
-        }
-      }
-      heartbeat();
-      setInterval(heartbeat, 15000); // refresh every 15s
-    })();
-  </script>
-
-  <!-- ================= MAIN APP LOGIC ================= -->
-  <script>
+    // GitHub API Endpoint for the offline games directory
     const REPO_API_URL = "https://api.github.com/repos/CoolDude2349/Offline-HTML-Games-Pack/contents/offline";
     
     let allGames = [];
-    let favorites = JSON.parse(localStorage.getItem("nexus_favs") || "[]");
     let currentActiveGame = null;
     let currentFilter = 'ALL';
 
@@ -979,38 +549,33 @@
     const activeGameTitle = document.getElementById("activeGameTitle");
     const loader = document.getElementById("loader");
     const gameCount = document.getElementById("gameCount");
-    const splashModal = document.getElementById("splashModal");
 
-    // Splash Dismissal
-    function closeSplash() {
-      splashModal.classList.add("hidden");
-    }
-
-    // Fetch Repository Catalog
+    // 1. Fetch Repository Contents Automatically
     async function fetchCatalogFromGitHub() {
       try {
         const response = await fetch(REPO_API_URL);
-        if (!response.ok) throw new Error("GitHub API rate limited or offline.");
+        if (!response.ok) throw new Error("GitHub API limit reached or repo unavailable.");
 
         const files = await response.json();
 
+        // Filter out non-HTML files
         allGames = files
           .filter(file => file.name.endsWith('.html') || file.name.endsWith('.htm'))
           .map(file => processGameData(file));
 
-        applyFilters();
+        renderGrid(allGames);
       } catch (err) {
         console.error(err);
         gameGrid.innerHTML = `
           <div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--accent-coral);">
-            <h3>Unable to fetch games</h3>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">API limit reached or bad connection. Please try refreshing.</p>
+            <h3>Failed to auto-load GitHub Repository</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Rate limit exceeded or bad connection.</p>
           </div>
         `;
       }
     }
 
-    // Game Metadata Processor
+    // 2. Helper to Format Raw Filename -> Clean Game Object
     function processGameData(file) {
       const rawName = file.name.replace(/\.(html|htm)$/i, '');
       const formattedTitle = formatTitle(rawName);
@@ -1027,25 +592,29 @@
       };
     }
 
+    // Format filename e.g. "angrybirdsspace" -> "Angry Birds Space"
     function formatTitle(str) {
+      // Split digits, uppercase, and special chars nicely
       let cleaned = str
         .replace(/([a-z])([0-9])/gi, '$1 $2')
         .replace(/([0-9])([a-z])/gi, '$1 $2')
         .replace(/io$/i, ' .io')
-        .replace(/_/g, ' ')
-        .replace(/-/g, ' ');
+        .replace(/_/g, ' ');
 
+      // Capitalize first letter of every word
       return cleaned.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
     }
 
+    // Categorize game based on keywords in name
     function detectCategory(name) {
       const n = name.toLowerCase();
       if (n.includes('soccer') || n.includes('basket') || n.includes('football') || n.includes('moto') || n.includes('drive') || n.includes('drift') || n.includes('car') || n.includes('race')) return 'SPORTS';
-      if (n.includes('fnaf') || n.includes('granny') || n.includes('backrooms') || n.includes('tank') || n.includes('shooter') || n.includes('battle') || n.includes('smash') || n.includes('zombie')) return 'ACTION';
-      if (n.includes('2048') || n.includes('chess') || n.includes('cuttherope') || n.includes('papas') || n.includes('quiz') || n.includes('riddle') || n.includes('word')) return 'PUZZLE';
+      if (n.includes('fnaf') || n.includes('granny') || n.includes('backrooms') || n.includes('tank') || n.includes('shooter') || n.includes('battle') || n.includes('smash')) return 'ACTION';
+      if (n.includes('2048') || n.includes('chess') || n.includes('cuttherope') || n.includes('papas') || n.includes('quiz') || n.includes('riddle')) return 'PUZZLE';
       return 'ARCADE';
     }
 
+    // Assign contextual emojis automatically
     function detectIcon(name, category) {
       const n = name.toLowerCase();
       if (n.includes('bird')) return '🎯';
@@ -1063,34 +632,21 @@
       return '🎮';
     }
 
-    // Favorites Logic
-    function toggleFavorite(e, id) {
-      e.stopPropagation();
-      if (favorites.includes(id)) {
-        favorites = favorites.filter(favId => favId !== id);
-      } else {
-        favorites.push(id);
-      }
-      localStorage.setItem("nexus_favs", JSON.stringify(favorites));
-      applyFilters();
-    }
-
-    // Render Cards
-    function renderGrid(list) {
+    // 3. Render Cards to Grid
+    function renderGrid(list = allGames) {
       gameGrid.innerHTML = "";
-      gameCount.textContent = `${list.length} GAMES`;
+      gameCount.textContent = `${list.length} TITLES FOUND`;
 
       if (list.length === 0) {
         gameGrid.innerHTML = `
-          <div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-dim);">
-            No games found matching your active criteria.
+          <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-dim);">
+            No games found matching your search.
           </div>
         `;
         return;
       }
 
       list.forEach(game => {
-        const isFav = favorites.includes(game.id);
         const card = document.createElement("div");
         card.className = "game-card";
         card.onclick = () => launchGame(game);
@@ -1098,13 +654,12 @@
         card.innerHTML = `
           <div class="card-cover">
             <div class="cover-pattern"></div>
-            <span class="fav-star ${isFav ? 'active' : ''}" onclick="toggleFavorite(event, '${game.id}')">★</span>
             <span class="cover-icon">${game.icon}</span>
           </div>
           <div class="card-body">
             <div class="card-title" title="${game.title}">${game.title}</div>
             <div class="card-meta">
-              <span class="category-tag">${game.category}</span>
+              <span>${game.category}</span>
               <span class="play-btn-hint">PLAY ▶</span>
             </div>
           </div>
@@ -1113,39 +668,7 @@
       });
     }
 
-    // Filtering & Sorting
-    function filterCategory(cat, element) {
-      currentFilter = cat;
-      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-      element.classList.add('active');
-      applyFilters();
-    }
-
-    function applyFilters() {
-      const searchTerm = document.getElementById("searchInput").value.toLowerCase();
-      const sortVal = document.getElementById("sortSelect").value;
-
-      let filtered = allGames.filter(g => {
-        const matchesCategory = 
-          (currentFilter === 'ALL') || 
-          (currentFilter === 'FAVORITES' && favorites.includes(g.id)) || 
-          (g.category === currentFilter);
-
-        const matchesSearch = g.title.toLowerCase().includes(searchTerm) || g.rawName.toLowerCase().includes(searchTerm);
-        return matchesCategory && matchesSearch;
-      });
-
-      // Sorting
-      filtered.sort((a, b) => {
-        if (sortVal === 'az') return a.title.localeCompare(b.title);
-        if (sortVal === 'za') return b.title.localeCompare(a.title);
-        return 0;
-      });
-
-      renderGrid(filtered);
-    }
-
-    // Launch Game logic
+    // 4. Launch Game
     async function launchGame(game) {
       currentActiveGame = game;
       activeGameTitle.textContent = game.title;
@@ -1193,13 +716,30 @@
       }
     }
 
+    function filterCategory(cat, element) {
+      currentFilter = cat;
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      element.classList.add('active');
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+      const filtered = allGames.filter(g => {
+        const matchesCategory = (currentFilter === 'ALL') || g.category === currentFilter;
+        const matchesSearch = g.title.toLowerCase().includes(searchTerm) || g.rawName.toLowerCase().includes(searchTerm);
+        return matchesCategory && matchesSearch;
+      });
+      renderGrid(filtered);
+    }
+
     document.getElementById("searchInput").addEventListener("input", applyFilters);
 
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && gameView.style.display === "flex") goHome();
     });
 
-    // Boot Up
+    // Run Catalog Loader on Boot
     fetchCatalogFromGitHub();
   </script>
 </body>
